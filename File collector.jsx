@@ -873,7 +873,7 @@ function searchWindow(s, h) {
         list1.removeAll()
         list2.removeAll()
         for (var i = 0; i < result.found.length; i++) { if (result.found[i].targetName) list1.add("item", result.found[i].source.file.fsName + " -> " + result.found[i].target) }
-        for (var i = 0; i < result.notFound.length; i++) { list2.add("item", (result.notFound[i].search ? "*" + result.notFound[i].search + "* -> " : "")) }
+        for (var i = 0; i < result.notFound.length; i++) { list2.add("item", (result.notFound[i].search ? "*" + result.notFound[i].search + "* -> " : "") + result.notFound[i].name) }
         ok.enabled = list1.items.length > 0 ? true : false
     }
 }
