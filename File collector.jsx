@@ -6,7 +6,8 @@
 // BEGIN__HARVEST_EXCEPTION_ZSTRING
 <javascriptresource>
 <name>File collector</name>
-<category>jazzy</category>
+<menu>automate</menu>
+<category>batch</category>
 <eventid>808f4b96-50f3-4ff3-b00f-bc4189e89c5c</eventid>
 </javascriptresource>
 // END__HARVEST_EXCEPTION_ZSTRING
@@ -558,10 +559,10 @@ function buildWindow() {
                 targetParent = Folder(target.parent),
                 sourceParent = Folder(source.parent),
                 metadataName = decodeURI(source.name)
-            if (targetParent.fsName != target.parent.fsName) { f[i].err = true; continue; } 
-            if (!source.exists) { f[i].err = true; continue; } 
+            if (targetParent.fsName != target.parent.fsName) { f[i].err = true; continue; }
+            if (!source.exists) { f[i].err = true; continue; }
             if (!targetParent.exists) { if (!targetParent.create()) { f[i].err = true; continue; } }
-            if (target.exists) { f[i].err = true; continue; } 
+            if (target.exists) { f[i].err = true; continue; }
             if (targetParent.fsName == sourceParent.fsName && cfg.move) {
                 if (!hasSameSourceFile(f, f[i])) {
                     source.rename(decodeURI(target.name))
@@ -583,8 +584,8 @@ function buildWindow() {
                 var target = getXMPname(f[i].target),
                     targetParent = Folder(target.parent),
                     sourceParent = Folder(source.parent)
-                if (targetParent.fsName != target.parent.fsName) { f[i].XMPErr = true; continue; } 
-                if (target.exists) { f[i].XMPErr = true; continue; } 
+                if (targetParent.fsName != target.parent.fsName) { f[i].XMPErr = true; continue; }
+                if (target.exists) { f[i].XMPErr = true; continue; }
                 if (targetParent.fsName == sourceParent.fsName && cfg.move) {
                     if (!hasSameSourceFile(f, f[i])) {
                         source.rename(decodeURI(target.name))
@@ -832,7 +833,9 @@ function searchWindow(s, h) {
                 for (var x = i + 1; x < f.length; x++) {
                     if (!f[x].targetName) continue;
                     if (f[i].source.file == f[x].source.file)
-                        f[i].targetName += f[x].targetName;
+                        var cur = f[x].targetName.replace(new RegExp(' ?' + f[x].source.name + ' ?', 'g'), '');
+                    cur = cur.replace(new RegExp(' ?' + decodeURI(f[x].source.file.parent).split('/').reverse()[0] + ' ?', 'g'), '');
+                    f[i].targetName = f[i].targetName + ', ' + cur;
                     f[x].targetName = null;
                 }
             }
@@ -971,7 +974,7 @@ function buildShortcutList(fileObj) {
     return output
 }
 function parseExpression(e, s, f, h) {
-    if (s == undefined) return '' 
+    if (s == undefined) return ''
     if (e == '') e = "[F]"
     e = e.replace(/[:*\?\"\<\>\|\#]/g, "_")
     if ($.os.search(/windows/i) == -1) {
@@ -1046,7 +1049,7 @@ function parseExpression(e, s, f, h) {
             to = tmp[1] != '' ? Number(tmp[1]) - 1 : s.length,
             c = [];
         for (var i = from; i <= to; i++) {
-            c.push(searchMode ? i + 1 : s[i])
+            if (searchMode ? i + 1 : s[i]) c.push(searchMode ? i + 1 : s[i])
         }
         if (searchMode) return c
         return c.length ? c.join(' ') : ''
