@@ -60,9 +60,10 @@ $.localize = true
         strModeHeaders = { ru: "список с заголовками", en: "list with headers" },
         strHeader = { ru: "заголовок", en: "header" },
         strList = { ru: "Список", en: "List" },
-        strFounded = { ru: "Список найденных файлов:", en: "List of found files:" },
+        strFounded = { ru: "Готово к переименованию ", en: "Ready to rename " },
+        strFiles = { ru: ' файлов:', en: ' files:' },
         strRenameAction = { ru: "Переименовать", en: "Rename" },
-        strNotFound = { ru: "Не найдены:", en: "Not found:" },
+        strNotFound = { ru: "Не найдено ", en: "Not found " },
         strPreset = { ru: "Сохранение пресета", en: "Saving a preset" },
         strPresetPromt = { ru: "Укажите имя пресета\nБудут сохранены настройки имени подкаталога и файла.", en: "Specify the name of the preset\nSubdirectory and file name settings will be saved." },
         strCopy = { ru: " копия", en: " copy" },
@@ -83,7 +84,7 @@ $.localize = true
         strHooks = { ru: "скобки", en: "hooks" },
         strOther = { ru: "прочие символы", en: "other symbols" },
         strDuplicates = { ru: 'создавать копии исходного файла при повторах имен файлов в результатах поиска', en: 'create copies of the original file when file names are repeated in search results' },
-        strRefreshList = { ru: 'Генерация путей', en: "Path generation" },
+        strRefreshList = { ru: 'Генерация новых путей', en: "New paths generation" },
         cfg = new Config,
         preset = new Preset,
         allFiles = {},
@@ -713,9 +714,9 @@ function insertInterval() {
 function searchWindow(s, h) {
     result = { found: [], notFound: [] }
     var w = new Window("dialog{text: '" + strBnSearch + "', orientation: 'column', alignChildren: ['fill', 'top'], spacing: 10,margins: 16 }"),
-        pnResult = w.add("panel{text:'" + strFounded + "', orientation: 'column', alignChildren: ['fill', 'top'], spacing: 10, margins:[10, 15, 10, 10]}"),
+        pnResult = w.add("panel{text:'" + strFounded + 0 + strFiles + "', orientation: 'column', alignChildren: ['fill', 'top'], spacing: 10, margins:[10, 15, 10, 10]}"),
         list1 = pnResult.add("listbox{preferredSize: [-1, 250]}"),
-        st = pnResult.add("statictext", undefined, strNotFound),
+        st = pnResult.add("statictext", undefined, strNotFound + 0 + strFiles),
         list2 = pnResult.add("listbox{preferredSize: [-1, 100]}"),
         chMetadata = pnResult.add("checkbox", undefined, strMetadata, { name: "chMetadata" }),
         pnTarget = w.add("panel{text:'" + strpnTarget + "', orientation: 'column', alignChildren: ['left', 'top'], spacing: 10, margins:[10, 15, 10, 10]}"),
@@ -845,7 +846,7 @@ function searchWindow(s, h) {
                     if (f[i].source.file == f[x].source.file) {
                         var cur = f[x].targetName.replace(new RegExp(' ?' + f[x].source.name + ' ?', 'g'), '');
                         cur = cur.replace(new RegExp(' ?' + decodeURI(f[x].source.file.parent).split('/').reverse()[0] + ' ?', 'g'), '');
-                        f[i].targetName = f[i].targetName + ', ' + cur;
+                        f[i].targetName = f[i].targetName + (cur.length ? ', ' + cur : '');
                         f[x].targetName = null;
                     }
                 }
@@ -903,6 +904,9 @@ function searchWindow(s, h) {
         list2.removeAll()
         for (var i = 0; i < result.found.length; i++) { if (result.found[i].targetName) list1.add("item", result.found[i].source.file.fsName + " -> " + result.found[i].target) }
         for (var i = 0; i < result.notFound.length; i++) { list2.add("item", (result.notFound[i].search ? "*" + result.notFound[i].search + "* -> " : "") + result.notFound[i].name) }
+        pnResult.text = strFounded + list1.items.length + strFiles
+        st.text = strNotFound + list2.items.length + strFiles
+
         ok.enabled = list1.items.length > 0 ? true : false
     }
 }
