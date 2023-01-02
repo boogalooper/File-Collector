@@ -14,11 +14,11 @@
 */
 #target photoshop
 $.localize = true
-$.locale = "ru"
+//$.locale = "ru"
 //globals
 {
     var strMessage = "File collector",
-        rev = "0.72",
+        rev = "0.73",
         GUID = "808f4b96-50f3-4ff3-b00f-bc4189e89c5c",
         strPnSource = { ru: "Источник файлов:", en: "File source:" },
         strBrowse = { ru: "Обзор...", en: "Browse..." },
@@ -82,8 +82,9 @@ $.locale = "ru"
         strHyphen = { ru: "дефис", en: "hyphen" },
         strHooks = { ru: "скобки", en: "hooks" },
         strOther = { ru: "прочие символы", en: "other symbols" },
-        strDuplicates = { ru: 'создавать копии исходного файла при повторах имен файлов в результатах поиска', en: 'create copies of the original file when file names are repeated in search results' }
-    cfg = new Config,
+        strDuplicates = { ru: 'создавать копии исходного файла при повторах имен файлов в результатах поиска', en: 'create copies of the original file when file names are repeated in search results' },
+        strRefreshList = { ru: 'Генерация путей', en: "Path generation" },
+        cfg = new Config,
         preset = new Preset,
         allFiles = {},
         fromBridge = {}
@@ -743,13 +744,14 @@ function searchWindow(s, h) {
     }
     chSourceAsTarget.onClick = function () {
         cfg.useSameFolder = this.value
+
         etTarget.enabled = bnTarget.enabled = !this.value
         if (this.value) {
             etTarget.text = cfg.source
         } else {
             cfg.targetPath = etTarget.text = cfg.source
         }
-        renewList()
+        if (cfg.targetPath != cfg.source) renewList()
     }
     chDuplicates.onClick = function () {
         cfg.duplicates = this.value
@@ -826,27 +828,54 @@ function searchWindow(s, h) {
     }
     function generateSavePaths(f) {
         var len = f.length,
-            targetPath = cfg.useSameFolder ? cfg.source : cfg.targetPath
+            targetPath = cfg.useSameFolder ? cfg.source : cfg.targetPath;
+
+        if (len > 100) {
+            var progress = progressWindow(strRefreshList, '', 3)
+            progress.show();
+        }
+
         for (var i = 0; i < f.length; i++) f[i].targetName = f[i].newName;
+
+        if (len > 100) progress.updateProgress('')
         if (!cfg.duplicates) {
-            for (var i = 0; i < f.length; i++) {
-                for (var x = i + 1; x < f.length; x++) {
+            for (var i = 0; i < len; i++) {
+                for (var x = i + 1; x < len; x++) {
                     if (!f[x].targetName) continue;
-                    if (f[i].source.file == f[x].source.file)
+                    if (f[i].source.file == f[x].source.file) {
                         var cur = f[x].targetName.replace(new RegExp(' ?' + f[x].source.name + ' ?', 'g'), '');
-                    cur = cur.replace(new RegExp(' ?' + decodeURI(f[x].source.file.parent).split('/').reverse()[0] + ' ?', 'g'), '');
-                    f[i].targetName = f[i].targetName + ', ' + cur;
-                    f[x].targetName = null;
+                        cur = cur.replace(new RegExp(' ?' + decodeURI(f[x].source.file.parent).split('/').reverse()[0] + ' ?', 'g'), '');
+                        f[i].targetName = f[i].targetName + ', ' + cur;
+                        f[x].targetName = null;
+                    }
                 }
             }
         }
+        if (len > 100) progress.updateProgress('')
         for (var i = 0; i < len; i++) {
             if (!f[i].targetName) continue;
             f[i].target = File(targetPath + '/' + f[i].targetName + '.' + f[i].source.ext).fsName
         }
+        if (len > 100) progress.updateProgress('')
         for (var i = 0; i < len; i++) {
             if (!f[i].targetName) continue;
             f[i].target = createUniqueFileName(f, f[i])
+        }
+        if (len > 100) progress.close();
+
+        function progressWindow(title, message, max) {
+            var w = new Window('palette', title),
+                bar = w.add('progressbar', undefined, 0, max),
+                stProgress = w.add('statictext', undefined, message);
+            stProgress.preferredSize = [350, 20]
+            stProgress.alignment = 'left'
+            bar.preferredSize = [350, 20]
+            w.updateProgress = function (message) {
+                bar.value++;
+                if (message) stProgress.text = bar.value + '/' + max + ': ' + message
+                w.update();
+            }
+            return w;
         }
     }
     function createUniqueFileName(folder, file) {
