@@ -74,6 +74,7 @@
 ## Модуль для Adobe Bridge
 
 С помощью дополнительного модуля после установки в Фотошоп скрипт может быть вызыван из Бриджа (запускает скрипт, передает путь к папке открытой или выбранной в бридж). Для этого нужно скопировать файл [File collector for Bridge.jsx](File%20collector%20for%20Bridge.jsx)
+
 В Windows:
 `C:\Program Files\Common Files\Adobe\Startup Scripts CC\Adobe Photoshop`
 в macOs:
