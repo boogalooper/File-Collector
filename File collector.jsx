@@ -60,10 +60,9 @@ $.localize = true
         strModeHeaders = { ru: "список с заголовками", en: "list with headers" },
         strHeader = { ru: "заголовок", en: "header" },
         strList = { ru: "Список", en: "List" },
-        strFounded = { ru: "Готово к переименованию ", en: "Ready to rename " },
-        strFiles = { ru: ' файлов:', en: ' files:' },
+        strFounded = { ru: "Готово к переименованию файлов: ", en: "Files ready to rename: " },
         strRenameAction = { ru: "Переименовать", en: "Rename" },
-        strNotFound = { ru: "Не найдено ", en: "Not found " },
+        strNotFound = { ru: "Не найдено файлов: ", en: "Files not found: " },
         strPreset = { ru: "Сохранение пресета", en: "Saving a preset" },
         strPresetPromt = { ru: "Укажите имя пресета\nБудут сохранены настройки имени подкаталога и файла.", en: "Specify the name of the preset\nSubdirectory and file name settings will be saved." },
         strCopy = { ru: " копия", en: " copy" },
@@ -84,7 +83,7 @@ $.localize = true
         strHooks = { ru: "скобки", en: "hooks" },
         strOther = { ru: "прочие символы", en: "other symbols" },
         strDuplicates = { ru: 'создавать копии исходного файла при повторах имен файлов в результатах поиска', en: 'create copies of the original file when file names are repeated in search results' },
-        strRefreshList = { ru: 'Генерация новых путей', en: "New paths generation" },
+        strRefreshList = { ru: 'Генерация новых путей...', en: "Generation of new paths..." },
         cfg = new Config,
         preset = new Preset,
         allFiles = {},
@@ -714,9 +713,9 @@ function insertInterval() {
 function searchWindow(s, h) {
     result = { found: [], notFound: [] }
     var w = new Window("dialog{text: '" + strBnSearch + "', orientation: 'column', alignChildren: ['fill', 'top'], spacing: 10,margins: 16 }"),
-        pnResult = w.add("panel{text:'" + strFounded + 0 + strFiles + "', orientation: 'column', alignChildren: ['fill', 'top'], spacing: 10, margins:[10, 15, 10, 10]}"),
+        pnResult = w.add("panel{text:'" + strFounded + 0 + "', orientation: 'column', alignChildren: ['fill', 'top'], spacing: 10, margins:[10, 15, 10, 10]}"),
         list1 = pnResult.add("listbox{preferredSize: [-1, 250]}"),
-        st = pnResult.add("statictext", undefined, strNotFound + 0 + strFiles),
+        st = pnResult.add("statictext", undefined, strNotFound + 0),
         list2 = pnResult.add("listbox{preferredSize: [-1, 100]}"),
         chMetadata = pnResult.add("checkbox", undefined, strMetadata, { name: "chMetadata" }),
         pnTarget = w.add("panel{text:'" + strpnTarget + "', orientation: 'column', alignChildren: ['left', 'top'], spacing: 10, margins:[10, 15, 10, 10]}"),
@@ -745,7 +744,6 @@ function searchWindow(s, h) {
     }
     chSourceAsTarget.onClick = function () {
         cfg.useSameFolder = this.value
-
         etTarget.enabled = bnTarget.enabled = !this.value
         if (this.value) {
             etTarget.text = cfg.source
@@ -830,14 +828,11 @@ function searchWindow(s, h) {
     function generateSavePaths(f) {
         var len = f.length,
             targetPath = cfg.useSameFolder ? cfg.source : cfg.targetPath;
-
         if (len > 100) {
-            var progress = progressWindow(strRefreshList, '', 3)
+            var progress = progressWindow(strRefreshList, 3)
             progress.show();
         }
-
         for (var i = 0; i < f.length; i++) f[i].targetName = f[i].newName;
-
         if (len > 100) progress.updateProgress('')
         if (!cfg.duplicates) {
             for (var i = 0; i < len; i++) {
@@ -863,17 +858,12 @@ function searchWindow(s, h) {
             f[i].target = createUniqueFileName(f, f[i])
         }
         if (len > 100) progress.close();
-
-        function progressWindow(title, message, max) {
+        function progressWindow(title, max) {
             var w = new Window('palette', title),
-                bar = w.add('progressbar', undefined, 0, max),
-                stProgress = w.add('statictext', undefined, message);
-            stProgress.preferredSize = [350, 20]
-            stProgress.alignment = 'left'
+                bar = w.add('progressbar', undefined, 0, max);
             bar.preferredSize = [350, 20]
-            w.updateProgress = function (message) {
+            w.updateProgress = function () {
                 bar.value++;
-                if (message) stProgress.text = bar.value + '/' + max + ': ' + message
                 w.update();
             }
             return w;
@@ -904,9 +894,8 @@ function searchWindow(s, h) {
         list2.removeAll()
         for (var i = 0; i < result.found.length; i++) { if (result.found[i].targetName) list1.add("item", result.found[i].source.file.fsName + " -> " + result.found[i].target) }
         for (var i = 0; i < result.notFound.length; i++) { list2.add("item", (result.notFound[i].search ? "*" + result.notFound[i].search + "* -> " : "") + result.notFound[i].name) }
-        pnResult.text = strFounded + list1.items.length + strFiles
-        st.text = strNotFound + list2.items.length + strFiles
-
+        pnResult.text = strFounded + list1.items.length
+        st.text = strNotFound + list2.items.length
         ok.enabled = list1.items.length > 0 ? true : false
     }
 }
