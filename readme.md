@@ -77,10 +77,13 @@
 
 В Windows:
 `C:\Program Files\Common Files\Adobe\Startup Scripts CC\Adobe Photoshop`
+
 в macOs:
 `/Users/yourUser/Library/Application Support/Adobe/Bridge CC/Startup Scripts`
 
 Также в обоих системах допустим такой вариант:
+
 `BridgeFolder/Scripts/Startup Scripts`
+
 `BridgeFolder/Startup Scripts`
 
