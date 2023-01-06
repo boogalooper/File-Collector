@@ -14,80 +14,114 @@
 */
 #target photoshop
 $.localize = true
-//$.locale = "ru"
+$.locale = "ru"
 //globals
 {
     var strMessage = "File collector",
-        rev = "0.73",
+        rev = "0.8",
         GUID = "808f4b96-50f3-4ff3-b00f-bc4189e89c5c",
-        strPnSource = { ru: "Источник файлов:", en: "File source:" },
-        strBrowse = { ru: "Обзор...", en: "Browse..." },
-        strSubdir = { ru: "учитывать подкаталоги", en: "include subdirectories" },
-        strFilter = { ru: "- искать следующие типы файлов", en: "- search following file types" },
-        strAllFiles = { ru: "все файлы", en: "all files" },
-        strPnSearch = { ru: "Список:", en: "List:" },
         strBnAddList = { ru: "Загрузить список из файла", en: "Load list from file" },
+        strBnBrowse = { ru: "Обзор...", en: "Browse..." },
+        strBnCancel = { ru: "Отмена", en: "Cancel" },
+        strbnListEdit = { ru: "Редактировать", en: "Edit" },
+        strbnOpenList = { ru: "Открыть", en: "Open" },
         strBnSaveList = { ru: "Сохранить список в файл", en: "Save list to file" },
-        strPnPattern = { ru: "Шаблон поиска и переименования файлов:", en: "File search and rename pattern:" },
-        strPresetLabel = { ru: "Пресет:", en: "Preset:" },
-        strRefresh = { ru: "Обновить", en: "Refresh" },
-        strSave = { ru: "Сохранить", en: "Save" },
-        strAdd = { ru: "Добавить", en: "Add new" },
-        strDel = { ru: "Удалить", en: "Delete" },
-        strSearch = { ru: "Поиск:", en: "Search:" },
-        strRename = { ru: "Переименование:", en: "Rename:" },
-        strWord = { ru: "слово", en: "word" },
-        strInterval = { ru: "интервал", en: "interval" },
-        strFile = { ru: "имя файла", en: "file name" },
-        strFolder = { ru: "имя папки", en: "folder name" },
-        strpnTarget = { ru: "Назначение файлов:", en: "File destination:" },
-        strSourceAsTarget = { ru: "та же папка, что и у источника", en: "same folder as source" },
-        strMove = { ru: "удалить найденные файлы из папки источника после копирования", en: "delete found files from the source folder after copying" },
         strBnSearch = { ru: "Поиск", en: "Search" },
-        strCancel = { ru: "Отмена", en: "Cancel" },
-        strInsert = { ru: "Вставить", en: "Insert" },
-        strSelectTip = { ru: "В указанном каталоге найдены текстовые файлы:", en: "Text files were found in the specified directory:" },
-        strSelectAction = { ru: "выберите файл из списка, если необходимо его открыть", en: "select a file from the list if you need to open it" },
-        strPrev = { ru: "Предыдущая строка", en: "Previous line" },
-        strLabelName = { ru: "Новое имя:", en: "New name:" },
-        strNext = { ru: "Следующая строка", en: "Next line" },
-        strOpen = { ru: "Открыть", en: "Open" },
-        strEdit = { ru: "Редактировать", en: "Edit" },
+        strBnSearchRename = { ru: "Переименовать", en: "Rename" },
+        strDivider = { ru: "Разделитель слов:", en: "Word delimeter:" },
+        strDividerAuto = { ru: "авто", en: "auto" },
+        strDividerComma = { ru: "запятая", en: "comma" },
+        strDividerDot = { ru: "точка", en: "dot" },
+        strDividerLine = { ru: "|", en: "|" },
+        strDividerSemicolon = { ru: ";", en: ";" },
+        strDividerSpace = { ru: "пробел", en: "space" },
+        strDividerTab = { ru: "табуляция", en: "tab" },
         strEditList = { ru: "Редактировать исходный список", en: "Edit source list" },
-        strEditLine = { ru: "Редактировать исходную строку", en: "Edit source line" },
-        strMode = { ru: "Режим отображения:", en: "View mode:" },
-        strModeText = { ru: "список", en: "list" },
-        strModeHeaders = { ru: "список с заголовками", en: "list with headers" },
-        strHeader = { ru: "заголовок", en: "header" },
-        strList = { ru: "Список", en: "List" },
-        strFounded = { ru: "Готово к переименованию файлов: ", en: "Files ready to rename: " },
-        strRenameAction = { ru: "Переименовать", en: "Rename" },
-        strNotFound = { ru: "Не найдено файлов: ", en: "Files not found: " },
-        strPreset = { ru: "Сохранение пресета", en: "Saving a preset" },
-        strPresetPromt = { ru: "Укажите имя пресета\nБудут сохранены настройки имени подкаталога и файла.", en: "Specify the name of the preset\nSubdirectory and file name settings will be saved." },
-        strCopy = { ru: " копия", en: " copy" },
         strErrPreset = { ru: "Набор с именем \"%1\" уже существует. Перезаписать?", en: "A set with the name \"%1\" already exists. Overwrite?" },
-        strDefailt = { ru: "по-умолчанию", en: "default" },
-        strMetadata = { ru: "сохранять исходное имя в метаданных файла", en: "save original name in metadata of file" },
-        strDiv = { ru: "Разделитель слов:", en: "Word delimeter:" },
-        strSpace = { ru: "пробел", en: "space" },
-        strAuto = { ru: "авто", en: "auto" },
-        strSemicolon = { ru: ";", en: ";" },
-        strComma = { ru: ",", en: "," },
-        strTab = { ru: "tab", en: "tab" },
-        strLine = { ru: "|", en: "|" },
-        strSymbols = { ru: "Показывать символы:", en: "Show symbols:" },
-        strDot = { ru: "точка", en: "dot" },
-        strComma = { ru: "запятая", en: "comma" },
-        strHyphen = { ru: "дефис", en: "hyphen" },
-        strHooks = { ru: "скобки", en: "hooks" },
-        strOther = { ru: "прочие символы", en: "other symbols" },
-        strDuplicates = { ru: 'создавать копии исходного файла при повторах имен файлов в результатах поиска', en: 'create copies of the original file when file names are repeated in search results' },
-        strRefreshList = { ru: 'Генерация новых путей...', en: "Generation of new paths..." },
+        strFilterHooks = { ru: "скобки", en: "hooks" },
+        strFilterHyphen = { ru: "дефис", en: "hyphen" },
+        strFilterOther = { ru: "прочие символы", en: "other symbols" },
+        strFilterSymbols = { ru: "Показывать символы:", en: "Show symbols:" },
+        strList = { ru: "Список", en: "List" },
+        strListEditLine = { ru: "Редактировать исходную строку", en: "Edit source line" },
+        strListMode = { ru: "Режим отображения:", en: "View mode:" },
+        strListModeHeaders = { ru: "список с заголовками", en: "list with headers" },
+        strListModeText = { ru: "список", en: "list" },
+        strPatternFile = { ru: "имя файла", en: "file name" },
+        strPatternFolder = { ru: "имя папки", en: "folder name" },
+        strPatternHeader = { ru: "заголовок", en: "header" },
+        strPatternInsert = { ru: "Вставить", en: "Insert" },
+        strPatternInterval = { ru: "интервал", en: "interval" },
+        strPatternNewName = { ru: "Новое имя:", en: "New name:" },
+        strPatternPrev = { ru: "Предыдущая строка", en: "Previous line" },
+        strPatternRename = { ru: "Переименование:", en: "Rename:" },
+        strPatternSearch = { ru: "Поиск:", en: "Search:" },
+        strPatternColumn = { ru: "столбец", en: "column" },
+        strPatternDocument = { ru: "документ", en: "document" },
+        strPnPattern = { ru: "Шаблон поиска и переименования файлов:", en: "File search and rename pattern:" },
+        strPnSearch = { ru: "Список:", en: "List:" },
+        strPnSource = { ru: "Источник:", en: "Source:" },
+        strPnTarget = { ru: "Назначение:", en: "Destination:" },
+        strPresetAdd = { ru: "Добавить", en: "Add new" },
+        strPresetCopy = { ru: " копия", en: " copy" },
+        strPresetDefailt = { ru: "по-умолчанию", en: "default" },
+        strPresetDelete = { ru: "Удалить", en: "Delete" },
+        strPresetLabel = { ru: "Пресет:", en: "Preset:" },
+        strPresetNew = { ru: "Сохранение пресета", en: "Saving a preset" },
+        strPresetPromt = { ru: "Укажите имя пресета\nБудут сохранены настройки имени подкаталога и файла.", en: "Specify the name of the preset\nSubdirectory and file name settings will be saved." },
+        strPresetRefresh = { ru: "Обновить", en: "Refresh" },
+        strPresetSave = { ru: "Сохранить", en: "Save" },
+        strSearchDuplicates = { ru: 'создавать копии исходного файла при повторах имен файлов в результатах поиска', en: 'create copies of the original file when file names are repeated in search results' },
+        strSearchFounded = { ru: "Готово к переименованию: ", en: "Ready to rename: " },
+        strSearchMetadata = { ru: "сохранять исходное имя в метаданных файла", en: "save original name in metadata of file" },
+        strSearchMove = { ru: "удалить найденные файлы из папки источника после копирования", en: "delete found files from the source folder after copying" },
+        strSearchNotFound = { ru: "Не найдено: ", en: "Not found: " },
+        strSearchRefresh = { ru: 'Генерация новых путей...', en: "Generation of new paths..." },
+        strSearchSourceAsTarget = { ru: "та же папка, что и у источника", en: "same folder as source" },
+        strSelectFileAction = { ru: "выберите файл из списка, если необходимо его открыть", en: "select a file from the list if you need to open it" },
+        strSelectFileTip = { ru: "В указанном каталоге найдены текстовые файлы:", en: "Text files were found in the specified directory:" },
+        strSelectDocumentAction = { ru: "выберите документ из списка, если необходимо его открыть", en: "select a document from the list if you want to open it" },
+        strSelectDocumentTip = { ru: "Открытые документы:", en: "Opened documents:" },
+        strSourceAllFiles = { ru: "все файлы", en: "all files" },
+        strSourceAllLayers = { ru: "все слои", en: "all layers" },
+        strSourceFilterFiles = { ru: "- искать следующие типы файлов", en: "- search following file types" },
+        strSourceFilterLayers = { ru: "- искать следующие типы слоев", en: "- search following layer types" },
+        strSourceSubdir = { ru: "учитывать подкаталоги", en: "include subdirectories" },
+        strSourceAllDocuments = { ru: "все открытые документы", en: "all opened documents" },
+        strSourceLayers = { ru: "слои", en: "layers" },
+        strSourceFiles = { ru: "файлы", en: "files" },
+        strPatternLayer = { ru: 'имя слоя', en: 'layer name' },
         cfg = new Config,
         preset = new Preset,
+        apl = new AM('application'),
+        doc = new AM('document'),
+        lr = new AM('layer'),
         allFiles = {},
-        fromBridge = {}
+        fromBridge = {},
+        layerKindArray =
+            [
+                5, //const kAnySheet             = 0; 
+                0, //const kPixelSheet           = 1;  
+                3, //const kAdjustmentSheet      = 2;  
+                2, //const kTextSheet            = 3;  
+                0, //const kVectorSheet          = 4;  
+                1, //const kSmartObjectSheet     = 5;  
+                1, //const kVideoSheet           = 6;  
+                4, //const kLayerGroupSheet      = 7;  
+                2, //const k3DSheet              = 8;  
+                3, //const kGradientSheet        = 9;  
+                3, //const kPatternSheet         = 10;  
+                3, //const kSolidColorSheet      = 11;  
+                0, //const kBackgroundSheet      = 12;  
+                5 //const kHiddenSectionBounder = 13;  
+            ],
+        layerTypesArray = [
+            { ru: 'пиксельный слой', en: 'pixel layer' },
+            { ru: 'смарт объект', en: 'smart Object' },
+            { ru: 'текст', en: 'text' },
+            { ru: 'настраиваемый слой', en: 'adjustment layer' },
+            { ru: 'группа', en: 'group' }
+        ];
 }
 if (app.playbackParameters.count) {
     try {
@@ -110,135 +144,163 @@ function buildWindow() {
     {
         var w = new Window("dialog{text: '" + strMessage + " " + rev + "', orientation: 'column', alignChildren: ['fill', 'top'], spacing: 10,margins: 16 }"),
             pnSource = w.add("panel{text:'" + strPnSource + "', orientation: 'column', alignChildren: ['left', 'top'], spacing: 10, margins:10   }"),
+            grMode = pnSource.add("group{orientation: 'row', alignChildren: ['left', 'center'], spacing: 10, margins: 0}"),
+            rbFiles = grMode.add("radiobutton{text:'" + strSourceFiles + "'}"),
+            rbLayers = grMode.add("radiobutton{text:'" + strSourceLayers + "'}"),
             grBrowse = pnSource.add("group{orientation: 'row', alignChildren: ['left', 'center'], spacing: 10, margins: 0}"),
             etSource = grBrowse.add('edittext {preferredSize: [400, -1], properties: {readonly: true}}'),
-            bnSource = grBrowse.add("button {text:'" + strBrowse + "'}"),
-            chSubfolder = pnSource.add("checkbox{text:'" + strSubdir + "'}"),
+            bnSource = grBrowse.add("button {text:'" + strBnBrowse + "'}"),
+            chSubfolder = pnSource.add("checkbox{text:'" + strSourceSubdir + "'}"),
             grFilter = pnSource.add("group{orientation: 'row', alignChildren: ['left', 'center'], spacing: 10, margins: 0}"),
-            dlFilter = grFilter.add("dropdownlist{selection:0, preferredSize: [100, -1]}", undefined, [strAllFiles]),
-            stFileFilter = grFilter.add("statictext{text:'" + strFilter + "',preferredSize: [200, -1] }"),
+            dlFilter = grFilter.add("dropdownlist{selection:0, preferredSize: [150, -1]}"),
+            stFileFilter = grFilter.add("statictext{text:'" + strSourceFilterFiles + "'}"),
             pnList = w.add("panel{text:'" + strPnSearch + "',orientation:'column',alignChildren: ['fill', 'top'],spacing: 10,margins: [10, 15, 10, 10]}"),
             grList = pnList.add("group{orientation: 'column',alignChildren: ['left', 'fill'],spacing: 5,margins: 0 }"),
             grListButtons = grList.add("group{orientation: 'row', alignChildren: ['center', 'top'], spacing: 5, margins: 0}"),
-            bnAddList = grListButtons.add("button{text:'" + strOpen + "' }"),
-            bnEditList = grListButtons.add("button{text:'" + strEdit + "'}"),
+            bnAddList = grListButtons.add("button{text:'" + strbnOpenList + "' }"),
+            bnEditList = grListButtons.add("button{text:'" + strbnListEdit + "'}"),
             stDiv = grListButtons.add("statictext"),
-            dlMode = grListButtons.add("dropdownlist", undefined, [strModeText, strModeHeaders]),
+            dlMode = grListButtons.add("dropdownlist", undefined, [strListModeText, strListModeHeaders]),
             grSymbols = grList.add("group{orientation: 'row', alignChildren: ['left', 'center'], spacing: 0, margins: 0}"),
-            stSymbolsFilter = grSymbols.add("statictext{text:'" + strSymbols + "'}"),
+            stSymbolsFilter = grSymbols.add("statictext{text:'" + strFilterSymbols + "'}"),
             ch1 = grSymbols.add("checkbox{text:'" + "а-Я" + "'}"),
             ch2 = grSymbols.add("checkbox{text:'" + "a-Z" + "'}"),
             ch3 = grSymbols.add("checkbox{text:'" + "0-9" + "'}"),
-            ch4 = grSymbols.add("checkbox{text:'" + strDot + "'}"),
-            ch5 = grSymbols.add("checkbox{text:'" + strComma + "'}"),
-            ch6 = grSymbols.add("checkbox{text:'" + strHyphen + "'}"),
-            ch7 = grSymbols.add("checkbox{text:'" + strHooks + "'}"),
-            ch8 = grSymbols.add("checkbox{text:'" + strOther + "'}"),
+            ch4 = grSymbols.add("checkbox{text:'" + strDividerDot + "'}"),
+            ch5 = grSymbols.add("checkbox{text:'" + strDividerComma + "'}"),
+            ch6 = grSymbols.add("checkbox{text:'" + strFilterHyphen + "'}"),
+            ch7 = grSymbols.add("checkbox{text:'" + strFilterHooks + "'}"),
+            ch8 = grSymbols.add("checkbox{text:'" + strFilterOther + "'}"),
             grText = grList.add("group{orientation: 'row', alignChildren: ['left', 'fill'], spacing: 0, margins: 0}"),
             textList = grText.add("listbox{preferredSize: [500, 200]}"),
             grListAdditionalButtons = pnList.add("group{orientation: 'row', alignChildren: ['center', 'top'], spacing: 5, margins: 0}"),
             stDiv2 = grListAdditionalButtons.add("statictext"),
-            dlDiv = grListAdditionalButtons.add("dropdownlist", undefined, [strAuto, strSemicolon, strComma, strTab, strLine, strSpace]),
+            dlDiv = grListAdditionalButtons.add("dropdownlist", undefined, [strDividerAuto, strDividerSemicolon, strDividerComma, strDividerTab, strDividerLine, strDividerSpace]),
             pnOptions = pnList.add("panel{text:'" + strPnPattern + "', orientation: 'column', alignChildren: ['fill', 'top'], spacing: 10, margins: [10, 15, 10, 10]}"),
             grPreset = pnOptions.add("group{orientation: 'row', alignChildren: ['left', 'center'], spacing: 10, margins: 0}"),
             stPreset = grPreset.add("statictext{text:'" + strPresetLabel + "'}"),
             dlPreset = grPreset.add("dropdownlist{selection:0, preferredSize: [200, -1]}"),
             grPresetButtons = grPreset.add("group{orientation: 'row', alignChildren: ['left', 'center'], spacing: 0, margins: 0}"),
-            bnRefresh = grPresetButtons.add("button{text:'" + "↻" + "', helpTip:'" + strRefresh + "',preferredSize: [30, -1]}"),
-            bnSave = grPresetButtons.add("button{text:'" + "✔" + "', helpTip:'" + strSave + "',preferredSize: [30, -1]}"),
-            bnSaveAs = grPresetButtons.add("button{text:'" + "+" + "', helpTip:'" + strAdd + "',preferredSize: [30, -1]}"),
-            bnDel = grPresetButtons.add("button{text:'" + "×" + "', helpTip:'" + strDel + "',preferredSize: [30, -1]}"),
+            bnRefresh = grPresetButtons.add("button{text:'" + "↻" + "', helpTip:'" + strPresetRefresh + "',preferredSize: [30, -1]}"),
+            bnSave = grPresetButtons.add("button{text:'" + "✔" + "', helpTip:'" + strPresetSave + "',preferredSize: [30, -1]}"),
+            bnSaveAs = grPresetButtons.add("button{text:'" + "+" + "', helpTip:'" + strPresetAdd + "',preferredSize: [30, -1]}"),
+            bnDel = grPresetButtons.add("button{text:'" + "×" + "', helpTip:'" + strPresetDelete + "',preferredSize: [30, -1]}"),
             pnDiv = pnOptions.add("panel{alignment:'fill'}"),
             grPattern = pnOptions.add("group{orientation: 'row', alignChildren: ['left', 'fill'], spacing: 10, margins: 0}"),
             grSearch = grPattern.add("group{orientation: 'column', alignChildren: ['fill', 'center'], spacing: 0, margins: 0}"),
-            stSearch = grSearch.add("statictext{text:'" + strSearch + "', preferredSize: [100, -1]}"),
+            stSearch = grSearch.add("statictext{text:'" + strPatternSearch + "', preferredSize: [100, -1]}"),
             etSearch = grSearch.add('edittext{preferredSize: [120, -1]}'),
             grRename = grPattern.add("group{orientation: 'column', alignChildren: ['fill', 'center'], spacing: 0, margins: 0}"),
-            stRename = grRename.add("statictext{text:'" + strRename + "', preferredSize: [340, -1]}"),
+            stRename = grRename.add("statictext{text:'" + strPatternRename + "', preferredSize: [340, -1]}"),
             etRename = grRename.add('edittext'),
             grPatternButtons = pnOptions.add("group{orientation: 'row', alignChildren: ['center', 'center'], spacing: 0, margins: 0}"),
-            bnWord = grPatternButtons.add("button{text:'" + "[N] " + strWord + "'}"),
-            bnInterval = grPatternButtons.add("button{text:'" + "[N-N] " + strInterval + "'}"),
-            bnFile = grPatternButtons.add("button{text:'" + "[F] " + strFile + "'}"),
-            bnFolder = grPatternButtons.add("button{text:'" + "[P] " + strFolder + "'}"),
-            bnHeader = grPatternButtons.add("button{text:'" + "[H] " + strHeader + "'}"),
+            bnWord = grPatternButtons.add("button{text:'" + "[" + cfg.word + "] " + strPatternColumn + "'}"),
+            bnInterval = grPatternButtons.add("button{text:'" + "[" + cfg.interval + "] " + strPatternInterval + "'}"),
+            bnFile = grPatternButtons.add("button{text:'" + '[N] ' + strPatternFile + "'}"),
+            bnFolder = grPatternButtons.add("button{text:'" + "[P] " + strPatternFolder + "'}"),
+            bnHeader = grPatternButtons.add("button{text:'" + "[H] " + strPatternHeader + "'}"),
             grPreview = pnOptions.add("group{orientation: 'row', alignChildren: ['left', 'center'], spacing: 5, margins: 0}"),
             grLabels = grPreview.add("group{orientation: 'column', alignChildren: ['right', 'center'], spacing: 5, margins: 0}"),
             stLabelSearch = grLabels.add("statictext{text:'" + strBnSearch + ":" + "'}"),
-            stLabelRename = grLabels.add("statictext{text:'" + strLabelName + "'}"),
+            stLabelRename = grLabels.add("statictext{text:'" + strPatternNewName + "'}"),
             grResult = grPreview.add("group{orientation: 'column', alignChildren: ['left', 'center'], spacing: 5, margins: 0}"),
             stPreviewSearch = grResult.add("statictext{preferredSize: [320, -1]}"),
             stPreviewRename = grResult.add("statictext{preferredSize: [320, -1]}"),
             grButtons = w.add("group{orientation: 'row', alignChildren: ['center', 'center'], spacing: 10, margins: 0}"),
             ok = grButtons.add("button{text:'" + strBnSearch + "'}"),
-            cancel = grButtons.add("button{text:'" + strCancel + "'}");
+            cancel = grButtons.add("button{text:'" + strBnCancel + "'}");
     }
-    dlMode.text = strMode
-    dlDiv.text = strDiv
+    dlMode.text = strListMode
+    dlDiv.text = strDivider
     target = etRename
-    dlPreset.onChange = function () {
-        if (this.selection.index == 0) {
-            bnDel.enabled = false
-            if (renew) {
-                var a = preset.putSettingsToArray(new Config)
-                preset.putArrayToSettings(cfg, a)
-                w.onShow(true)
-            }
-        } else {
-            bnDel.enabled = true
-            if (renew) {
-                var a = preset.getPreset(this.selection.text)
-                preset.putArrayToSettings(cfg, a)
-                w.onShow(true)
-            }
-        }
-        cfg.preset = this.selection.text
-        if (w.visible) { cfg.putScriptSettings(cfg) }
-        preset.checkPresetIntegrity(w)
-    }
-    bnSave.onClick = function () {
-        var a = preset.putSettingsToArray(cfg)
-        var nm = dlPreset.selection.text
-        preset.putPreset(nm, a, "save")
-        cfg.putScriptSettings(cfg)
-        preset.checkPresetIntegrity(w)
-    }
-    bnSaveAs.onClick = function () {
-        var a = preset.putSettingsToArray(cfg)
-        nm = prompt(strPresetPromt, dlPreset.selection.text + strCopy, strPreset);
-        if (nm != null && nm != "") {
-            if (preset.getPreset(nm) == "" && nm != strDefailt) {
-                preset.putPreset(nm, a, "add")
-                loadPresets()
-                renew = false;
-                dlPreset.selection = dlPreset.find(nm)
-                renew = true;
+    {
+        dlPreset.onChange = function () {
+            if (this.selection.index == 0) {
+                bnDel.enabled = false
+                if (renew) {
+                    var a = preset.putSettingsToArray(new Config)
+                    preset.putArrayToSettings(cfg, a)
+                    w.onShow(true)
+                }
             } else {
-                if (nm != strDefailt) {
-                    if (confirm(localize(strErrPreset, nm), false, strPreset)) {
-                        preset.putPreset(nm, a, "save")
-                        renew = false;
-                        dlPreset.selection = dlPreset.find(nm)
-                        renew = true;
+                bnDel.enabled = true
+                if (renew) {
+                    var a = preset.getPreset(this.selection.text)
+                    preset.putArrayToSettings(cfg, a)
+                    w.onShow(true)
+                }
+            }
+            cfg.preset = this.selection.text
+            if (w.visible) { cfg.putScriptSettings(cfg) }
+            preset.checkPresetIntegrity(w)
+        }
+        bnSave.onClick = function () {
+            var a = preset.putSettingsToArray(cfg)
+            var nm = dlPreset.selection.text
+            preset.putPreset(nm, a, "save")
+            cfg.putScriptSettings(cfg)
+            preset.checkPresetIntegrity(w)
+        }
+        bnSaveAs.onClick = function () {
+            var a = preset.putSettingsToArray(cfg)
+            nm = prompt(strPresetPromt, dlPreset.selection.text + strPresetCopy, strPresetNew);
+            if (nm != null && nm != "") {
+                if (preset.getPreset(nm) == "" && nm != strPresetDefailt) {
+                    preset.putPreset(nm, a, "add")
+                    loadPresets()
+                    renew = false;
+                    dlPreset.selection = dlPreset.find(nm)
+                    renew = true;
+                } else {
+                    if (nm != strPresetDefailt) {
+                        if (confirm(localize(strErrPreset, nm), false, strPresetNew)) {
+                            preset.putPreset(nm, a, "save")
+                            renew = false;
+                            dlPreset.selection = dlPreset.find(nm)
+                            renew = true;
+                        }
                     }
                 }
             }
+            cfg.putScriptSettings(cfg)
+            preset.checkPresetIntegrity(w)
         }
-        cfg.putScriptSettings(cfg)
-        preset.checkPresetIntegrity(w)
+        bnDel.onClick = function () {
+            var a = preset.putSettingsToArray(cfg)
+            var nm = dlPreset.selection.text
+            var num = dlPreset.selection.index
+            preset.putPreset(nm, a, "delete")
+            loadPresets()
+            num = num > dlPreset.items.length - 1 ? dlPreset.items.length - 1 : num
+            dlPreset.selection = num
+            cfg.putScriptSettings(cfg)
+            preset.checkPresetIntegrity(w)
+        }
+        bnRefresh.onClick = function () { dlPreset.onChange() }
     }
-    bnDel.onClick = function () {
-        var a = preset.putSettingsToArray(cfg)
-        var nm = dlPreset.selection.text
-        var num = dlPreset.selection.index
-        preset.putPreset(nm, a, "delete")
-        loadPresets()
-        num = num > dlPreset.items.length - 1 ? dlPreset.items.length - 1 : num
-        dlPreset.selection = num
-        cfg.putScriptSettings(cfg)
-        preset.checkPresetIntegrity(w)
+    rbFiles.onClick = function () {
+        cfg.globalMode = false
+        chSubfolder.text = cfg.globalMode ? strSourceAllDocuments : strSourceSubdir;
+        stFileFilter.text = cfg.globalMode ? strSourceFilterLayers : strSourceFilterFiles;
+        bnFile.text = '[N] ' + (cfg.globalMode ? strPatternLayer : strPatternFile);
+        bnFolder.text = '[P] ' + (cfg.globalMode ? strPatternDocument : strPatternFolder);
+        chSubfolder.value = cfg.useSubfolders
+        grBrowse.enabled = true
+        etSource.text = cfg.targetPath
+        app.doProgress(strBnSearch, "enumFiles(Folder(fromBridge.folder ? fromBridge.folder : cfg.sourcePath))")
+        checkButtonsState()
     }
-    bnRefresh.onClick = function () { dlPreset.onChange() }
+    rbLayers.onClick = function () {
+        cfg.globalMode = true
+        chSubfolder.text = cfg.globalMode ? strSourceAllDocuments : strSourceSubdir;
+        stFileFilter.text = cfg.globalMode ? strSourceFilterLayers : strSourceFilterFiles;
+        bnFile.text = '[N] ' + (cfg.globalMode ? strPatternLayer : strPatternFile);
+        bnFolder.text = '[P] ' + (cfg.globalMode ? strPatternDocument : strPatternFolder);
+        chSubfolder.value = cfg.useAllDocuments
+        grBrowse.enabled = !cfg.useAllDocuments
+        enumLayers(doc.getProperty('title'))
+        checkButtonsState()
+    }
     ch1.onClick = function () { cfg.filterCyrillic = this.value; dlMode.onChange() }
     ch2.onClick = function () { cfg.filterLatin = this.value; dlMode.onChange() }
     ch3.onClick = function () { cfg.filterDigits = this.value; dlMode.onChange() }
@@ -248,9 +310,14 @@ function buildWindow() {
     ch7.onClick = function () { cfg.filterBracket = this.value; dlMode.onChange() }
     ch8.onClick = function () { cfg.filterOther = this.value; dlMode.onChange() }
     bnSource.onClick = function () {
-        var fol = new Folder(cfg.source)
-        app.doProgress(strBnSearch, "enumFiles(fol.selectDlg())")
-        checkButtonsState()
+        if (cfg.globalMode) {
+            enumLayers(selectDocumentWindow());
+            checkButtonsState()
+        } else {
+            var fol = new Folder(cfg.sourcePath)
+            app.doProgress(strBnSearch, "enumFiles(fol.selectDlg())")
+            checkButtonsState()
+        }
     }
     bnAddList.onClick = function () {
         var fle = new File,
@@ -259,7 +326,7 @@ function buildWindow() {
             sourceText = result
             dlMode.selection = null
             formattedText = buildList(sourceText)
-            dlMode.selection = cfg.mode
+            dlMode.selection = cfg.listMode
         }
         checkButtonsState()
     }
@@ -275,12 +342,19 @@ function buildWindow() {
     }
     ok.onClick = function () {
         var result = searchWindow(formattedText.text, headers)
-        if (result != null) { w.close(); app.doProgress("", "moveFiles(result.found)") }
+        if (result != null) {
+            w.close();
+            if (cfg.globalMode) {
+                app.doForcedProgress(strBnSearchRename, 'renameLayers(result.found)')
+            } else {
+                app.doProgress(strBnSearchRename, "moveFiles(result.found)")
+            }
+        }
     }
     cancel.onClick = function () { w.close(2) }
     dlMode.onChange = function () {
         if (this.selection == undefined) return;
-        cfg.mode = this.selection.index
+        cfg.listMode = this.selection.index
         if (w.visible) preset.checkPresetIntegrity(w)
         formattedText = buildList(sourceText)
         var columns = 0,
@@ -297,10 +371,10 @@ function buildWindow() {
             }
         }
         var props = { numberOfColumns: columns, showHeaders: true, columnTitles: [], columnWidths: [] },
-            shift = cfg.mode ? -1 : 1
+            shift = cfg.listMode ? -1 : 1
         sel = textList.selection != null ? textList.selection.index + shift : 0
         headers = []
-        if (cfg.mode && text.length > 0) {
+        if (cfg.listMode && text.length > 0) {
             headers = text.shift()
             while (headers.length < columns) {
                 headers.push("")
@@ -311,7 +385,7 @@ function buildWindow() {
             }
         }
         var h = headers.slice()
-        if (cfg.mode && text.length > 0) {
+        if (cfg.listMode && text.length > 0) {
             for (var i = 0; i < columns; i++) {
                 h[i] = i + 1 + ". " + h[i]
             }
@@ -327,16 +401,16 @@ function buildWindow() {
         textList.size.width = pnList.size.width - 25
         textList.onClick = function () {
             cfg.options = etSearch.text + '\n' + etRename.text
-            if (this.selection != undefined) { previewList(formattedText.text[this.selection.index + cfg.mode]) } else { stPreviewRename.text = stPreviewSearch.text = "" }
+            if (this.selection != undefined) { previewList(formattedText.text[this.selection.index + cfg.listMode]) } else { stPreviewRename.text = stPreviewSearch.text = "" }
             checkButtonsState()
             preset.checkPresetIntegrity(w)
         }
         textList.onDoubleClick = function () {
             if (this.selection != undefined) {
                 var sel = this.selection.index
-                var result = editLine(sourceText[formattedText.ids[sel + cfg.mode]], delimiter)
+                var result = editLine(sourceText[formattedText.ids[sel + cfg.listMode]], delimiter)
                 if (result != null) {
-                    sourceText[formattedText.ids[sel + cfg.mode]] = result;
+                    sourceText[formattedText.ids[sel + cfg.listMode]] = result;
                     dlMode.onChange()
                     textList.selection = sel >= textList.items.length ? textList.items.length - 1 : sel
                     checkButtonsState()
@@ -358,10 +432,10 @@ function buildWindow() {
         sel = sel >= textList.items.length ? textList.items.length - 1 : sel
         sel = sel < 0 ? 0 : sel
         textList.selection = sel
-        if (textList.selection != null) previewList(formattedText.text[sel + cfg.mode])
+        if (textList.selection != null) previewList(formattedText.text[sel + cfg.listMode])
     }
     dlDiv.onChange = function () {
-        cfg.div = this.selection.index
+        cfg.divider = this.selection.index
         if (renew) dlMode.onChange()
     }
     etRename.addEventListener('focus', commonHandler)
@@ -370,15 +444,38 @@ function buildWindow() {
         target = evt.target
         bnFile.enabled = bnFolder.enabled = bnHeader.enabled = evt.target == etRename ? true : false
     }
-    bnWord.onClick = function () { target.textselection = insertWord(); textList.onClick(); target.active = true }
-    bnInterval.onClick = function () { target.textselection = insertInterval(); textList.onClick(); target.active = true }
+    bnWord.onClick = function () {
+        var result = insertWord();
+        if (result) target.textselection = result;
+        this.text = '[' + cfg.word + '] ' + strPatternColumn
+        textList.onClick();
+        target.active = true
+    }
+    bnInterval.onClick = function () {
+        var result = insertInterval();
+        if (result) target.textselection = result;
+        this.text = '[' + cfg.interval + '] ' + strPatternInterval
+        textList.onClick();
+        target.active = true
+    }
     bnFile.onClick = function () { etRename.textselection = "[F]"; textList.onClick(); etRename.active = true }
     bnFolder.onClick = function () { etRename.textselection = "[P]"; textList.onClick(); etRename.active = true }
     bnHeader.onClick = function () { etRename.textselection = "[H]"; textList.onClick(); etRename.active = true }
     etRename.onChanging = function () { textList.onClick(); }
     etSearch.onChanging = function () { textList.onClick(); }
-    dlFilter.onChange = function () { cfg.filter = this.selection.text }
-    chSubfolder.onClick = function () { cfg.useSubfolders = this.value; if (etSource.text != '') enumFiles(Folder(cfg.source)) }
+    dlFilter.onChange = function () { if (cfg.globalMode) cfg.layerFilter = this.selection.text else cfg.fileFilter = this.selection.text }
+    chSubfolder.onClick = function () {
+        if (cfg.globalMode) {
+            grBrowse.enabled = !this.value
+            cfg.useAllDocuments = this.value
+            enumLayers(doc.getProperty('title'))
+        }
+        else {
+            grBrowse.enabled = true
+            if (etSource.text != '') enumFiles(Folder(cfg.sourcePath))
+            cfg.useSubfolders = this.value;
+        }
+    }
     w.onShow = function (fromPreset) {
         renew = false
         if (!fromPreset) {
@@ -389,15 +486,24 @@ function buildWindow() {
             stRename.size.width = pnOptions.size.width - grSearch.size.width - 30
             dlPreset.size.width = pnOptions.size.width - grPresetButtons.size.width - stPreset.size.width - 40
             stPreviewRename.size.width = stPreviewSearch.size.width = pnOptions.size.width - grLabels.size.width - 35
+            chSubfolder.size.width = etSource.size.width - dlFilter.size.width - stFileFilter.size.width - 20
             w.layout.layout(true)
-            chSubfolder.value = cfg.useSubfolders
-            app.doProgress(strBnSearch, "enumFiles(Folder(fromBridge.folder ? fromBridge.folder : cfg.source))")
-            checkButtonsState()
+            if (!apl.getProperty('numberOfDocuments') && cfg.globalMode) {
+                cfg.globalMode = false
+                rbLayers.enabled = false
+            }
+            if (!cfg.globalMode) {
+                rbFiles.value = true
+                rbFiles.onClick()
+            } else {
+                rbLayers.value = true;
+                rbLayers.onClick()
+            }
             loadPresets()
             dlPreset.selection = dlPreset.find(cfg.preset) != null ? dlPreset.find(cfg.preset) : 0
         }
-        dlMode.selection = cfg.mode
-        dlDiv.selection = cfg.div ? cfg.div : 0
+        dlMode.selection = cfg.listMode
+        dlDiv.selection = cfg.divider ? cfg.divider : 0
         etSearch.text = cfg.options.split('\n')[0]
         etRename.text = cfg.options.split('\n')[1]
         ch1.value = cfg.filterCyrillic == undefined ? 1 : cfg.filterCyrillic
@@ -418,9 +524,9 @@ function buildWindow() {
         var text = [],
             len = list.length,
             indexes = [];
-        if (cfg.div) {
+        if (cfg.divider) {
             var sep = [null, ";", ",", "\t", "|", ' ']
-            delimiter = sep[cfg.div]
+            delimiter = sep[cfg.divider]
             for (var i = 0; i < len; i++) {
                 var regExp = new RegExp('[' + delimiter + ']', 'g'),
                     line = formatLine(list[i]);
@@ -498,20 +604,20 @@ function buildWindow() {
         var len = dlPreset.items.length
         for (var i = 0; i < len; i++) { dlPreset.remove(dlPreset.items[0]) }
         var items = preset.getPresetList()
-        dlPreset.add('item', strDefailt)
+        dlPreset.add('item', strPresetDefailt)
         for (var i = 0; i < items.length; i++) { dlPreset.add('item', items[i].key) }
     }
     function enumFiles(currentFolder) {
         if (currentFolder) {
             if (currentFolder.exists) {
                 allFiles = {}
-                cfg.source = etSource.text = currentFolder.fsName.toString()
-                app.doProgress(strSearch, "findAllFiles(cfg.source, allFiles, cfg.useSubfolders)")
+                cfg.sourcePath = etSource.text = currentFolder.fsName.toString()
+                app.doProgress(strPatternSearch, "findAllFiles(cfg.sourcePath, allFiles, cfg.useSubfolders)")
                 var typesArray = buildShortcutList(allFiles),
                     len = typesArray.length;
                 dlFilter.removeAll()
                 for (var i = 0; i < len; i++) dlFilter.add("item", typesArray[i])
-                dlFilter.selection = dlFilter.find(cfg.filter) != null ? dlFilter.find(cfg.filter) : 0
+                dlFilter.selection = dlFilter.find(cfg.fileFilter) != null ? dlFilter.find(cfg.fileFilter) : 0
                 if (w.visible || fromBridge.file || fromBridge.folder) {
                     if (allFiles["TXT"] != undefined || allFiles["CSV"] != undefined) {
                         allFiles["CSV"] == undefined ? [] : allFiles["CSV"]
@@ -523,7 +629,7 @@ function buildWindow() {
                             sourceText = readFile(File(result))
                             dlMode.selection = null
                             formattedText = buildList(sourceText)
-                            dlMode.selection = cfg.mode
+                            dlMode.selection = cfg.listMode
                             fromBridge.file = ""
                         }
                     }
@@ -533,10 +639,37 @@ function buildWindow() {
         }
         return false
     }
+    function enumLayers(currentDocument) {
+        etSource.text = doc.getProperty('title')
+        if (currentDocument) {
+            allFiles = {};
+            var len = apl.getProperty('numberOfDocuments')
+            cur = doc.getProperty('itemIndex');
+            findAllLayers(allFiles, doc.getProperty('itemIndex'));
+            if (cfg.useAllDocuments) {
+                for (var i = 1; i <= len; i++) {
+                    if (i == cur) continue;
+                    findAllLayers(allFiles, doc.getProperty('itemIndex', i, true));
+                }
+            }
+            var typesArray = buildShortcutList(allFiles),
+                len = typesArray.length;
+            dlFilter.removeAll()
+            for (var i = 0; i < len; i++) dlFilter.add("item", typesArray[i])
+            dlFilter.selection = dlFilter.find(cfg.layerFilter) != null ? dlFilter.find(cfg.layerFilter) : 0
+            return true
+        }
+        return false
+    }
     function previewList(s) {
-        var c = parseExpression(cfg.options.split('\n')[0], s, undefined, headers),
-            e = parseExpression(cfg.options.split('\n')[1], s, File('%' + strFolder + '%/%' + strFile + '%.jpg'), headers),
-            search = [],
+        if (cfg.globalMode) {
+            var c = parseExpression(cfg.options.split('\n')[0], s, undefined, headers),
+                e = parseExpression(cfg.options.split('\n')[1], s, File('%' + strPatternDocument + '%/%' + strPatternLayer + '%'), headers)
+        } else {
+            var c = parseExpression(cfg.options.split('\n')[0], s, undefined, headers),
+                e = parseExpression(cfg.options.split('\n')[1], s, File('%' + strPatternFolder + '%/%' + strPatternFile + '%.jpg'), headers)
+        }
+        var search = [],
             rename = []
         for (var i = 0; i < c.length; i++) {
             search.push(c[i].text)
@@ -641,17 +774,41 @@ function buildWindow() {
             return true
         }
     }
+    function renameLayers(layersList) {
+        var documents = [],
+            len = apl.getProperty('numberOfDocuments');
+        documents.push(doc.getProperty('documentID'));
+        for (var i = 1; i <= len; i++) {
+            var cur = doc.getProperty('documentID', i, true);
+            if (cur != documents[0]) documents.push(cur)
+        }
+        documents.reverse()
+        do {
+            var cur = documents.shift();
+            doc.selectDocument(cur);
+            for (var i = 0; i < layersList.length; i++) {
+                if (layersList[i] && layersList[i].targetName) {
+                    if (layersList[i].source.parentID == cur) {
+                        app.updateProgress(i + 1, layersList.length)
+                        app.changeProgressText(layersList[i].targetName)
+                        doc.renameLayer(layersList[i].source.id, layersList[i].targetName);
+                        layersList[i] = null;
+                    }
+                }
+            }
+        } while (documents.length)
+    }
     return w
 }
 function selectListWindow(s) {
     var selected = ""
     var w = new Window("dialog{text: '" + strMessage + "', orientation: 'column', alignChildren: ['fill', 'top']}"),
-        stHelpTip = w.add("statictext", undefined, strSelectTip),
+        stHelpTip = w.add("statictext", undefined, strSelectFileTip),
         list = w.add("listbox{preferredSize: [550, 75]}"),
-        stAction = w.add("statictext", undefined, strSelectAction),
+        stAction = w.add("statictext", undefined, strSelectFileAction),
         grButtons = w.add("group{orientation: 'row', alignChildren: ['left', 'center'], spacing: 10, margins: 0}"),
-        ok = grButtons.add("button", undefined, strOpen, { name: "ok" }),
-        cancel = grButtons.add("button", undefined, strCancel, { name: "cancel" });
+        ok = grButtons.add("button", undefined, strbnOpenList, { name: "ok" }),
+        cancel = grButtons.add("button", undefined, strBnCancel, { name: "cancel" });
     list.onDoubleClick = function () {
         var fle = File(list.selection.text)
         if (fle.exists) fle.execute()
@@ -669,13 +826,41 @@ function selectListWindow(s) {
     w.show()
     return selected
 }
+function selectDocumentWindow() {
+    var selected = ''
+    var w = new Window("dialog{text: '" + strMessage + "', orientation: 'column', alignChildren: ['fill', 'top']}"),
+        stHelpTip = w.add("statictext", undefined, strSelectDocumentTip),
+        list = w.add("listbox{preferredSize: [550, 75]}"),
+        stAction = w.add("statictext", undefined, strSelectDocumentAction),
+        grButtons = w.add("group{orientation: 'row', alignChildren: ['left', 'center'], spacing: 10, margins: 0}"),
+        ok = grButtons.add("button", undefined, strbnOpenList, { name: "ok" }),
+        cancel = grButtons.add("button", undefined, strBnCancel, { name: "cancel" });
+    cancel.onClick = function () { selected = ''; w.close() }
+    ok.onClick = function () { doc.selectDocument(doc.getProperty('documentID', list.selection.index + 1, true)); w.close() }
+    list.onChange = function () {
+        if (list.selection) {
+            ok.enabled = true
+            selected = list.selection.text
+        } else {
+            ok.enabled = false
+            selected = ''
+        }
+    }
+    w.onShow = function () {
+        var len = apl.getProperty('numberOfDocuments')
+        for (var i = 1; i <= len; i++) list.add("item", doc.getProperty('title', i, true))
+        list.selection = doc.getProperty('itemIndex') - 1
+    }
+    w.show()
+    return selected
+}
 function insertWord() {
     var result = "",
-        w = new Window("dialog{text: '" + strInsert + ' ' + strWord + "', orientation: 'column', alignChildren: ['fill', 'top'], spacing: 10,margins: 16 }"),
+        w = new Window("dialog{text: '" + strPatternInsert + ' ' + strPatternColumn + "', orientation: 'column', alignChildren: ['fill', 'top'], spacing: 10,margins: 16 }"),
         et = w.add('edittext'),
         g = w.add("group{orientation: 'row', alignChildren: ['left', 'center'], spacing: 10, margins: 0}"),
-        ok = g.add("button", undefined, strInsert, { name: "ok" }),
-        cancel = g.add("button", undefined, strCancel, { name: "cancel" });
+        ok = g.add("button", undefined, strPatternInsert, { name: "ok" }),
+        cancel = g.add("button", undefined, strBnCancel, { name: "cancel" });
     et.text = cfg.word
     et.onChanging = function () { if (et.text.match(/[^\d]/)) et.text = et.text.replace(/[^\d]/, "") }
     ok.onClick = function () {
@@ -689,14 +874,14 @@ function insertWord() {
 }
 function insertInterval() {
     var result = "",
-        w = new Window("dialog{text: '" + strInsert + ' ' + strInterval + "', orientation: 'column', alignChildren: ['fill', 'top'], spacing: 10,margins: 16 }"),
+        w = new Window("dialog{text: '" + strPatternInsert + ' ' + strPatternInterval + "', orientation: 'column', alignChildren: ['fill', 'top'], spacing: 10,margins: 16 }"),
         g1 = w.add("group{orientation: 'row', alignChildren: ['center', 'center'], spacing: 10, margins: 0}"),
         etFrom = g1.add('edittext{preferredSize: [50, -1]}'),
         st = g1.add("statictext{text:'-'}"),
         etTo = g1.add('edittext{preferredSize: [50, -1]}'),
         g = w.add("group{orientation: 'row', alignChildren: ['left', 'center'], spacing: 10, margins: 0}"),
-        ok = g.add("button", undefined, strInsert, { name: "ok" }),
-        cancel = g.add("button", undefined, strCancel, { name: "cancel" });
+        ok = g.add("button", undefined, strPatternInsert, { name: "ok" }),
+        cancel = g.add("button", undefined, strBnCancel, { name: "cancel" });
     etFrom.text = cfg.interval.split('-')[0]
     etTo.text = cfg.interval.split('-')[1]
     etFrom.onChanging = function () { if (etFrom.text.match(/[^\d]/)) etFrom.text = etFrom.text.replace(/[^\d]/, "") }
@@ -713,71 +898,78 @@ function insertInterval() {
 function searchWindow(s, h) {
     result = { found: [], notFound: [] }
     var w = new Window("dialog{text: '" + strBnSearch + "', orientation: 'column', alignChildren: ['fill', 'top'], spacing: 10,margins: 16 }"),
-        pnResult = w.add("panel{text:'" + strFounded + 0 + "', orientation: 'column', alignChildren: ['fill', 'top'], spacing: 10, margins:[10, 15, 10, 10]}"),
-        list1 = pnResult.add("listbox{preferredSize: [-1, 250]}"),
-        st = pnResult.add("statictext", undefined, strNotFound + 0),
-        list2 = pnResult.add("listbox{preferredSize: [-1, 100]}"),
-        chMetadata = pnResult.add("checkbox", undefined, strMetadata, { name: "chMetadata" }),
-        pnTarget = w.add("panel{text:'" + strpnTarget + "', orientation: 'column', alignChildren: ['left', 'top'], spacing: 10, margins:[10, 15, 10, 10]}"),
-        chSourceAsTarget = pnTarget.add("checkbox{text: '" + strSourceAsTarget + "'}"),
-        grTarget = pnTarget.add("group{orientation: 'row', alignChildren: ['left', 'center'], spacing: 10, margins: 0}"),
-        etTarget = grTarget.add('edittext {preferredSize: [600, -1], properties: {readonly: true}}'),
-        bnTarget = grTarget.add("button{text:'" + strBrowse + "'}"),
-        chMove = pnTarget.add("checkbox{text:'" + strMove + "'}"),
-        chDuplicates = pnTarget.add("checkbox{text:'" + strDuplicates + "'}"),
-        grButtons = w.add("group{orientation: 'row', alignChildren: ['center', 'center'], spacing: 10, margins: 0}"),
-        ok = grButtons.add("button", undefined, strRenameAction, { name: "ok" }),
-        cancel = grButtons.add("button", undefined, strCancel, { name: "cancel" });
+        pnResult = w.add("panel{text:'" + strSearchFounded + 0 + "', orientation: 'column', alignChildren: ['fill', 'top'], spacing: 10, margins:[10, 15, 10, 10]}"),
+        list1 = pnResult.add("listbox{preferredSize: [700, 250]}"),
+        st = pnResult.add("statictext", undefined, strSearchNotFound + 0),
+        list2 = pnResult.add("listbox{preferredSize: [-1, 100]}")
+    if (!cfg.globalMode) {
+        var chMetadata = pnResult.add("checkbox", undefined, strSearchMetadata, { name: "chMetadata" }),
+            pnTarget = w.add("panel{text:'" + strPnTarget + "', orientation: 'column', alignChildren: ['left', 'top'], spacing: 10, margins:[10, 15, 10, 10]}"),
+            chSourceAsTarget = pnTarget.add("checkbox{text: '" + strSearchSourceAsTarget + "'}"),
+            grTarget = pnTarget.add("group{orientation: 'row', alignChildren: ['left', 'center'], spacing: 10, margins: 0}"),
+            etTarget = grTarget.add('edittext {preferredSize: [600, -1], properties: {readonly: true}}'),
+            bnTarget = grTarget.add("button{text:'" + strBnBrowse + "'}"),
+            chMove = pnTarget.add("checkbox{text:'" + strSearchMove + "'}"),
+            chDuplicates = pnTarget.add("checkbox{text:'" + strSearchDuplicates + "'}")
+        bnTarget.onClick = function () {
+            var target = new Folder(cfg.targetPath),
+                fol = target.selectDlg()
+            if (fol) {
+                if (fol.exists) {
+                    cfg.targetPath = etTarget.text = fol.fsName.toString()
+                    renewList()
+                }
+            }
+        }
+        chSourceAsTarget.onClick = function () {
+            cfg.useSameFolder = this.value
+            etTarget.enabled = bnTarget.enabled = !this.value
+            if (this.value) {
+                etTarget.text = cfg.sourcePath
+            } else {
+                cfg.targetPath = etTarget.text = cfg.sourcePath
+            }
+            if (cfg.targetPath != cfg.sourcePath) renewList()
+        }
+        chDuplicates.onClick = function () {
+            cfg.duplicates = this.value
+            renewList()
+        }
+        chMove.onClick = function () { cfg.move = this.value }
+        chMetadata.onClick = function () { cfg.metadata = this.value }
+    }
+    var grButtons = w.add("group{orientation: 'row', alignChildren: ['center', 'center'], spacing: 10, margins: 0}"),
+        ok = grButtons.add("button", undefined, strBnSearchRename, { name: "ok" }),
+        cancel = grButtons.add("button", undefined, strBnCancel, { name: "cancel" });
     list1.onDoubleClick = function () {
         fle = File(result.found[list1.selection.index].source.file)
         if (fle.exists) fle.execute()
     }
-    bnTarget.onClick = function () {
-        var target = new Folder(cfg.targetPath),
-            fol = target.selectDlg()
-        if (fol) {
-            if (fol.exists) {
-                cfg.targetPath = etTarget.text = fol.fsName.toString()
-                renewList()
-            }
-        }
-    }
-    chSourceAsTarget.onClick = function () {
-        cfg.useSameFolder = this.value
-        etTarget.enabled = bnTarget.enabled = !this.value
-        if (this.value) {
-            etTarget.text = cfg.source
-        } else {
-            cfg.targetPath = etTarget.text = cfg.source
-        }
-        if (cfg.targetPath != cfg.source) renewList()
-    }
-    chDuplicates.onClick = function () {
-        cfg.duplicates = this.value
-        renewList()
-    }
-    chMove.onClick = function () { cfg.move = this.value }
-    chMetadata.onClick = function () { cfg.metadata = this.value }
     ok.onClick = function () { w.close() }
     cancel.onClick = function () { result = null; w.close() }
     w.onShow = function () {
-        chMove.value = cfg.move
-        chSourceAsTarget.value = cfg.useSameFolder
-        etTarget.enabled = bnTarget.enabled = !chSourceAsTarget.value
-        chMetadata.value = cfg.metadata
-        chDuplicates.value = cfg.duplicates
-        if (cfg.useSameFolder) {
-            etTarget.text = cfg.targetPath = cfg.source
-        } else {
-            if (Folder(cfg.targetPath).exists) {
-                etTarget.text = cfg.targetPath
+        if (!cfg.globalMode) {
+            chMove.value = cfg.move
+            chSourceAsTarget.value = cfg.useSameFolder
+            etTarget.enabled = bnTarget.enabled = !chSourceAsTarget.value
+            chMetadata.value = cfg.metadata
+            chDuplicates.value = cfg.duplicates
+            if (cfg.useSameFolder) {
+                etTarget.text = cfg.targetPath = cfg.sourcePath
             } else {
-                cfg.targetPath = etTarget.text = cfg.source
+                if (Folder(cfg.targetPath).exists) {
+                    etTarget.text = cfg.targetPath
+                } else {
+                    cfg.targetPath = etTarget.text = cfg.sourcePath
+                }
             }
+            allFiles = {}
+            // добавить проверку на заполненность
+            app.doProgress(strPatternSearch, "findAllFiles(cfg.sourcePath, allFiles, cfg.useSubfolders)")
+            app.doProgress("", "findFile (s, h, allFiles, cfg.fileFilter, result)")
+        } else {
+            findLayer(s, h, allFiles, cfg.layerFilter, result)
         }
-        allFiles = {}
-        app.doProgress(strSearch, "findAllFiles(cfg.source, allFiles, cfg.useSubfolders)")
-        app.doProgress("", "findFile (s, h, allFiles, cfg.filter, result)")
         renewList()
     }
     w.show();
@@ -788,7 +980,7 @@ function searchWindow(s, h) {
             renameTemplate = cfg.options.split('\n')[1],
             found = [],
             notFound = []
-        for (var i = 0 + cfg.mode; i < listLen; i++) {
+        for (var i = 0 + cfg.listMode; i < listLen; i++) {
             app.updateProgress(i + 1, listLen)
             app.changeProgressText(s[i].join(' '))
             var curSearch = parseExpression(searchTemplate, s[i], undefined, headers)
@@ -797,7 +989,7 @@ function searchWindow(s, h) {
                     var currentResult = []
                     for (a in files) {
                         if (files[a][0] != undefined && a != "TXT" && a != "CSV" && a != "XMP") {
-                            if (a == filter || filter == strAllFiles.ru || filter == strAllFiles.en) {
+                            if (a == filter || filter == strSourceAllFiles.ru || filter == strSourceAllFiles.en) {
                                 var filesLength = files[a].length
                                 for (var z = 0; z < filesLength; z++) {
                                     search = files[a][z].uCaseName.indexOf(curSearch[n].text.toUpperCase())
@@ -827,9 +1019,9 @@ function searchWindow(s, h) {
     }
     function generateSavePaths(f) {
         var len = f.length,
-            targetPath = cfg.useSameFolder ? cfg.source : cfg.targetPath;
+            targetPath = cfg.useSameFolder ? cfg.sourcePath : cfg.targetPath;
         if (len > 100) {
-            var progress = progressWindow(strRefreshList, 3)
+            var progress = progressWindow(strSearchRefresh, 3)
             progress.show();
         }
         for (var i = 0; i < f.length; i++) f[i].targetName = f[i].newName;
@@ -869,6 +1061,21 @@ function searchWindow(s, h) {
             return w;
         }
     }
+    function generateLayerNames(f) {
+        var len = f.length;
+        for (var i = 0; i < f.length; i++) f[i].targetName = f[i].newName;
+        for (var i = 0; i < len; i++) {
+            for (var x = i + 1; x < len; x++) {
+                if (!f[x].targetName) continue;
+                if (f[i].source.id == f[x].source.id) {
+                    var cur = f[x].targetName.replace(new RegExp(' ?' + f[x].source.name + ' ?', 'g'), '');
+                    cur = cur.replace(new RegExp(' ?' + f[x].source.parentName + ' ?', 'g'), '');
+                    f[i].targetName = f[i].targetName + (cur.length ? ', ' + cur : '');
+                    f[x].targetName = null;
+                }
+            }
+        }
+    }
     function createUniqueFileName(folder, file) {
         var inParentPath = decodeURI(File(file.target).parent),
             inFileName = file.targetName.replace(/ +$/, ''),
@@ -888,20 +1095,67 @@ function searchWindow(s, h) {
             return false
         }
     }
+    function findLayer(s, headers, layers, filter, result) {
+        var listLen = s.length,
+            searchTemplate = cfg.options.split('\n')[0],
+            renameTemplate = cfg.options.split('\n')[1],
+            found = [],
+            notFound = []
+        for (var i = 0 + cfg.listMode; i < listLen; i++) {
+            var curSearch = parseExpression(searchTemplate, s[i], undefined, headers)
+            if (curSearch.length) {
+                for (var n = 0; n < curSearch.length; n++) {
+                    var currentResult = []
+                    for (a in layers) {
+                        if (layers[a][0] != undefined && a != 5) {
+                            if (layerTypesArray[a] == filter || filter == strSourceAllLayers.ru || filter == strSourceAllLayers.en) {
+                                var filesLength = layers[a].length
+                                for (var z = 0; z < filesLength; z++) {
+                                    search = layers[a][z].uCaseName.indexOf(curSearch[n].text.toUpperCase())
+                                    if (search != -1) {
+                                        var c = parseHeader(parseExpression(renameTemplate, s[i], layers[a][z].file, headers), curSearch[n].header)
+                                        currentResult.push({ source: layers[a][z], newName: c, index: layers[a][z].uCaseName.length - curSearch[n].text.length })
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    if (currentResult.length > 0) {
+                        currentResult.sort(sortFiles)
+                        found.push(currentResult[0])
+                    } else {
+                        notFound.push({ name: s[i].join(' '), search: curSearch[n].text })
+                    }
+                }
+            } else {
+                notFound.push({ name: s[i].join(' '), search: "" })
+            }
+        }
+        result.found = found
+        result.notFound = notFound
+        return
+        function sortFiles(a, b) { return a.index >= b.index ? 1 : -1 }
+    }
     function renewList() {
-        generateSavePaths(result.found)
         list1.removeAll()
         list2.removeAll()
-        for (var i = 0; i < result.found.length; i++) { if (result.found[i].targetName) list1.add("item", result.found[i].source.file.fsName + " -> " + result.found[i].target) }
-        for (var i = 0; i < result.notFound.length; i++) { list2.add("item", (result.notFound[i].search ? "*" + result.notFound[i].search + "* -> " : "") + result.notFound[i].name) }
-        pnResult.text = strFounded + list1.items.length
-        st.text = strNotFound + list2.items.length
+        if (!cfg.globalMode) {
+            generateSavePaths(result.found)
+            for (var i = 0; i < result.found.length; i++) { if (result.found[i].targetName) list1.add("item", result.found[i].source.file.fsName + " -> " + result.found[i].target) }
+            for (var i = 0; i < result.notFound.length; i++) { list2.add("item", (result.notFound[i].search ? "*" + result.notFound[i].search + "* -> " : "") + result.notFound[i].name) }
+        } else {
+            generateLayerNames(result.found)
+            for (var i = 0; i < result.found.length; i++) { if (result.found[i].targetName) list1.add("item", result.found[i].source.parentName + ': ' + result.found[i].source.name + " -> " + result.found[i].targetName) }
+            for (var i = 0; i < result.notFound.length; i++) { list2.add("item", (result.notFound[i].search ? "*" + result.notFound[i].search + "* -> " : "") + result.notFound[i].name) }
+        }
+        pnResult.text = strSearchFounded + list1.items.length
+        st.text = strSearchNotFound + list2.items.length
         ok.enabled = list1.items.length > 0 ? true : false
     }
 }
 function editList(s, div) {
     var output = ''
-    div = div == ' ' ? strSpace : div
+    div = div == ' ' ? strDividerSpace : div
     div = div == '\t' ? "TAB" : div
     var w = new Window("dialog");
     w.text = strEditList;
@@ -913,15 +1167,15 @@ function editList(s, div) {
     if (s.length > 0) {
         var stDiv = w.add("statictext");
         stDiv.preferredSize.width = 300;
-        stDiv.text = strDiv + " \"" + div + "\""
+        stDiv.text = strDivider + " \"" + div + "\""
     }
     var grButtons = w.add("group");
     grButtons.orientation = "row";
     grButtons.alignChildren = ["center", "center"];
     grButtons.spacing = 10;
     grButtons.margins = 0;
-    var ok = grButtons.add("button", undefined, strSave);
-    var cancel = grButtons.add("button", undefined, strCancel, { name: "cancel" });
+    var ok = grButtons.add("button", undefined, strPresetSave);
+    var cancel = grButtons.add("button", undefined, strBnCancel, { name: "cancel" });
     ok.onClick = function () { output = text.text.split('\n'); w.close() }
     cancel.onClick = function () { output = null; w.close() }
     w.onShow = function () {
@@ -933,24 +1187,24 @@ function editList(s, div) {
 }
 function editLine(s, div) {
     var output = ""
-    div = div == ' ' ? strSpace : div
+    div = div == ' ' ? strDividerSpace : div
     div = div == '\t' ? "TAB" : div
     var w = new Window("dialog");
-    w.text = strEditLine
+    w.text = strListEditLine
     w.orientation = "column";
     w.alignChildren = ["fill", "top"];
     var text = w.add("edittext")
     text.preferredSize.width = 550;
     var stDiv = w.add("statictext");
     stDiv.preferredSize.width = 300;
-    stDiv.text = strDiv + " \"" + div + "\""
+    stDiv.text = strDivider + " \"" + div + "\""
     var grButtons = w.add("group");
     grButtons.orientation = "row";
     grButtons.alignChildren = ["center", "center"];
     grButtons.spacing = 10;
     grButtons.margins = 0;
-    var ok = grButtons.add("button", undefined, strSave, { name: "ok" });
-    var cancel = grButtons.add("button", undefined, strCancel, { name: "cancel" });
+    var ok = grButtons.add("button", undefined, strPresetSave, { name: "ok" });
+    var cancel = grButtons.add("button", undefined, strBnCancel, { name: "cancel" });
     ok.onClick = function () { output = text.text; w.close() }
     cancel.onClick = function () { output = null; w.close() }
     w.onShow = function () {
@@ -988,23 +1242,46 @@ function putFileToTypeObject(fileName, fileObj) {
     if (!fileObj.hasOwnProperty(ext)) fileObj[ext] = []
     fileObj[ext].push({ file: fileName, uCaseName: un, name: n, ext: e })
 }
+function findAllLayers(lrsObj, idx) {
+    var doc = new AM('document'),
+        lr = new AM('layer'),
+        from = doc.getProperty('hasBackgroundLayer', idx, true) ? 0 : 1,
+        to = doc.getProperty('numberOfLayers', idx, true);
+    for (var i = from; i <= to; i++) {
+        if (lr.getProperty('layerSection', i, true, idx, 'document').value == 'layerSectionEnd') continue;
+        var kind = layerKindArray[lr.getProperty('layerKind', i, true, idx, 'document')];
+        if (!lrsObj[kind]) lrsObj[kind] = [];
+        var nm = lr.getProperty('name', i, true, idx, 'document'),
+            parent = doc.getProperty('title', idx, true).replace(/\.\S+$/, "");
+        lrsObj[kind].push({
+            name: nm,
+            uCaseName: nm.toUpperCase(),
+            id: lr.getProperty('layerID', i, true, idx, 'document'),
+            parentID: doc.getProperty('documentID', idx, true),
+            parentName: parent,
+            file: new File(parent + '/' + nm)
+        })
+    }
+}
 function buildShortcutList(fileObj) {
-    var output = [strAllFiles]
+    var output = [cfg.globalMode ? strSourceAllLayers : strSourceAllFiles]
     for (a in fileObj) {
-        if (fileObj[a][0] != undefined && a != "TXT" && a != "CSV" && a != "XMP") output.push(a)
+        if (fileObj[a][0] != undefined && a != "TXT" && a != "CSV" && a != "XMP") output.push(cfg.globalMode ? layerTypesArray[a] : a)
     }
     return output
 }
 function parseExpression(e, s, f, h) {
     if (s == undefined) return ''
     if (e == '') e = "[F]"
-    e = e.replace(/[:*\?\"\<\>\|\#]/g, "_")
-    if ($.os.search(/windows/i) == -1) {
-        e = e.replace(/\\|\/+/g, "/")
-        e = e.replace(/\/$|^\//, '')
-    } else {
-        e = e.replace(/\/|\\+/g, "\\")
-        e = e.replace(/\\$|^\\/, '')
+    if (!cfg.globalMode) {
+        e = e.replace(/[:*\?\"\<\>\|\#]/g, "_")
+        if ($.os.search(/windows/i) == -1) {
+            e = e.replace(/\\|\/+/g, "/")
+            e = e.replace(/\/$|^\//, '')
+        } else {
+            e = e.replace(/\/|\\+/g, "\\")
+            e = e.replace(/\\$|^\\/, '')
+        }
     }
     if (f == undefined) e = e.replace(/[\/\\]/g, '')
     var searchResult = [],
@@ -1094,9 +1371,12 @@ function parseHeader(s, c) {
     return s.replace(/\[H\]/g, c).replace(/[\[\]]/g, '')
 }
 function Config() {
-    this.source = ""
+    this.globalMode = false
+    this.sourcePath = ""
     this.useSubfolders = true
-    this.filter = ""
+    this.useAllDocuments = false
+    this.fileFilter = ""
+    this.layerFilter = ""
     this.options = "[3-]\n[F] [1-2]"
     this.word = "1"
     this.interval = "1-2"
@@ -1105,8 +1385,8 @@ function Config() {
     this.targetPath = ""
     this.preset = ""
     this.metadata = true
-    this.mode = 0
-    this.div = 0
+    this.listMode = 0
+    this.divider = 0
     this.filterCyrillic = true
     this.filterLatin = true
     this.filterDigits = true
@@ -1116,18 +1396,21 @@ function Config() {
     this.filterBracket = true
     this.filterOther = true
     this.duplicates = true
-    this.getScriptSettings = function (settingsObj, fromAction) {
-        if (fromAction) {
-            var d = app.playbackParameters
-        } else {
-            try { var d = app.getCustomOptions(GUID) } catch (e) { }
-        }
-        if (d != undefined) descriptorToObject(settingsObj, d, strMessage)
+    this.getScriptSettings = function (settingsObj) {
+        var f = new File(app.preferencesFolder + "/" + strMessage + ".desc"),
+            d = new ActionDescriptor();
+        try {
+            if (f.exists) {
+                f.open('r')
+                f.encoding = 'BINARY'
+                var s = f.read()
+                f.close();
+                d.fromStream(s);
+            }
+        } catch (e) { alert(e, '', 1) }
+        if (d.count) descriptorToObject(settingsObj, d)
         function descriptorToObject(o, d, s) {
             var l = d.count;
-            if (l) {
-                if (d.hasKey(s2t("message")) && (s != d.getString(s2t("message")))) return;
-            }
             for (var i = 0; i < l; i++) {
                 var k = d.getKey(i);
                 var t = d.getType(k);
@@ -1146,14 +1429,18 @@ function Config() {
             }
         }
     }
-    this.putScriptSettings = function (settingsObj, toAction) {
-        var d = objectToDescriptor(settingsObj, strMessage)
-        if (toAction) { app.playbackParameters = d }
-        else { app.putCustomOptions(GUID, d) }
+    this.putScriptSettings = function (settingsObj) {
+        var d = objectToDescriptor(settingsObj),
+            f = new File(app.preferencesFolder + "/" + strMessage + ".desc");
+        try {
+            f.open('w')
+            f.encoding = 'BINARY'
+            f.write(d.toStream())
+            f.close()
+        } catch (e) { alert(e, '', 1) }
         function objectToDescriptor(o, s) {
             var d = new ActionDescriptor;
             var l = o.reflect.properties.length;
-            d.putString(s2t("message"), s);
             for (var i = 0; i < l; i++) {
                 var k = o.reflect.properties[i].toString();
                 if (k == "__proto__" || k == "__count__" || k == "__class__" || k == "reflect") continue;
@@ -1314,3 +1601,62 @@ function Preset() {
 }
 function s2t(s) { return stringIDToTypeID(s) }
 function t2s(t) { return typeIDToStringID(t) }
+function AM(target, order) {
+    var s2t = stringIDToTypeID,
+        t2s = typeIDToStringID;
+    target = target ? s2t(target) : null;
+    this.getProperty = function (property, id, idxMode, parentIdx, parentClass) {
+        property = s2t(property);
+        var r = new ActionReference();
+        r.putProperty(s2t('property'), property);
+        id != undefined ? (idxMode ? r.putIndex(target, id) : r.putIdentifier(target, id)) :
+            r.putEnumerated(target, s2t('ordinal'), order ? s2t(order) : s2t('targetEnum'));
+        if (parentIdx) r.putIndex(s2t(parentClass), parentIdx)
+        return getDescValue(executeActionGet(r), property)
+    }
+    this.hasProperty = function (property, id, idxMode) {
+        property = s2t(property);
+        (r = new ActionReference()).putProperty(s2t('property'), property);
+        id ? (idxMode ? r.putIndex(target, id) : r.putIdentifier(target, id))
+            : r.putEnumerated(target, s2t('ordinal'), order ? s2t(order) : s2t('targetEnum'));
+        return executeActionGet(r).hasKey(property)
+    }
+    this.descToObject = function (d) {
+        var o = {}
+        for (var i = 0; i < d.count; i++) {
+            var k = d.getKey(i)
+            o[t2s(k)] = getDescValue(d, k)
+        }
+        return o
+    }
+    this.selectDocument = function (id) {
+        (r = new ActionReference()).putIdentifier(target, id);
+        (d = new ActionDescriptor()).putReference(s2t('null'), r);
+        executeAction(s2t('select'), d, DialogModes.NO)
+    }
+    this.renameLayer = function (id, title) {
+        var r = new ActionReference();
+        r.putIdentifier(s2t('layer'), id);
+        (d = new ActionDescriptor()).putReference(s2t('null'), r);
+        (d1 = new ActionDescriptor()).putString(s2t('name'), title);
+        d.putObject(s2t('to'), s2t('layer'), d1);
+        executeAction(s2t('set'), d, DialogModes.NO);
+    }
+    function getDescValue(d, p) {
+        switch (d.getType(p)) {
+            case DescValueType.OBJECTTYPE: return { type: t2s(d.getObjectType(p)), value: d.getObjectValue(p) };
+            case DescValueType.LISTTYPE: return d.getList(p);
+            case DescValueType.REFERENCETYPE: return d.getReference(p);
+            case DescValueType.BOOLEANTYPE: return d.getBoolean(p);
+            case DescValueType.STRINGTYPE: return d.getString(p);
+            case DescValueType.INTEGERTYPE: return d.getInteger(p);
+            case DescValueType.LARGEINTEGERTYPE: return d.getLargeInteger(p);
+            case DescValueType.DOUBLETYPE: return d.getDouble(p);
+            case DescValueType.ALIASTYPE: return d.getPath(p);
+            case DescValueType.CLASSTYPE: return d.getClass(p);
+            case DescValueType.UNITDOUBLE: return (d.getUnitDoubleValue(p));
+            case DescValueType.ENUMERATEDTYPE: return { type: t2s(d.getEnumerationType(p)), value: t2s(d.getEnumerationValue(p)) };
+            default: break;
+        };
+    }
+}
