@@ -14,13 +14,11 @@
 */
 #target photoshop
 $.localize = true
-$.locale = "ru"
-//globals
+//$.locale = "ru"
 {
     var strMessage = "File collector",
         rev = "0.8",
         GUID = "808f4b96-50f3-4ff3-b00f-bc4189e89c5c",
-        strBnAddList = { ru: "Загрузить список из файла", en: "Load list from file" },
         strBnBrowse = { ru: "Обзор...", en: "Browse..." },
         strBnCancel = { ru: "Отмена", en: "Cancel" },
         strbnListEdit = { ru: "Редактировать", en: "Edit" },
@@ -47,17 +45,18 @@ $.locale = "ru"
         strListMode = { ru: "Режим отображения:", en: "View mode:" },
         strListModeHeaders = { ru: "список с заголовками", en: "list with headers" },
         strListModeText = { ru: "список", en: "list" },
+        strPatternColumn = { ru: "столбец", en: "column" },
+        strPatternDocument = { ru: "документ", en: "document" },
         strPatternFile = { ru: "имя файла", en: "file name" },
         strPatternFolder = { ru: "имя папки", en: "folder name" },
         strPatternHeader = { ru: "заголовок", en: "header" },
         strPatternInsert = { ru: "Вставить", en: "Insert" },
         strPatternInterval = { ru: "интервал", en: "interval" },
+        strPatternLayer = { ru: 'имя слоя', en: 'layer name' },
         strPatternNewName = { ru: "Новое имя:", en: "New name:" },
         strPatternPrev = { ru: "Предыдущая строка", en: "Previous line" },
         strPatternRename = { ru: "Переименование:", en: "Rename:" },
         strPatternSearch = { ru: "Поиск:", en: "Search:" },
-        strPatternColumn = { ru: "столбец", en: "column" },
-        strPatternDocument = { ru: "документ", en: "document" },
         strPnPattern = { ru: "Шаблон поиска и переименования файлов:", en: "File search and rename pattern:" },
         strPnSearch = { ru: "Список:", en: "List:" },
         strPnSource = { ru: "Источник:", en: "Source:" },
@@ -78,19 +77,19 @@ $.locale = "ru"
         strSearchNotFound = { ru: "Не найдено: ", en: "Not found: " },
         strSearchRefresh = { ru: 'Генерация новых путей...', en: "Generation of new paths..." },
         strSearchSourceAsTarget = { ru: "та же папка, что и у источника", en: "same folder as source" },
-        strSelectFileAction = { ru: "выберите файл из списка, если необходимо его открыть", en: "select a file from the list if you need to open it" },
-        strSelectFileTip = { ru: "В указанном каталоге найдены текстовые файлы:", en: "Text files were found in the specified directory:" },
         strSelectDocumentAction = { ru: "выберите документ из списка, если необходимо его открыть", en: "select a document from the list if you want to open it" },
         strSelectDocumentTip = { ru: "Открытые документы:", en: "Opened documents:" },
+        strSelectFileAction = { ru: "выберите файл из списка, если необходимо его открыть", en: "select a file from the list if you need to open it" },
+        strSelectFileTip = { ru: "В указанном каталоге найдены текстовые файлы:", en: "Text files were found in the specified directory:" },
+        strSourceAllDocuments = { ru: "все открытые документы", en: "all opened documents" },
         strSourceAllFiles = { ru: "все файлы", en: "all files" },
         strSourceAllLayers = { ru: "все слои", en: "all layers" },
+        strSourceFiles = { ru: "файлы", en: "files" },
         strSourceFilterFiles = { ru: "- искать следующие типы файлов", en: "- search following file types" },
         strSourceFilterLayers = { ru: "- искать следующие типы слоев", en: "- search following layer types" },
-        strSourceSubdir = { ru: "учитывать подкаталоги", en: "include subdirectories" },
-        strSourceAllDocuments = { ru: "все открытые документы", en: "all opened documents" },
         strSourceLayers = { ru: "слои", en: "layers" },
-        strSourceFiles = { ru: "файлы", en: "files" },
-        strPatternLayer = { ru: 'имя слоя', en: 'layer name' },
+        strSourceSubdir = { ru: "учитывать подкаталоги", en: "include subdirectories" },
+        strBnAddList = { ru: "Загрузить список из файла", en: "Load list from file" },
         cfg = new Config,
         preset = new Preset,
         apl = new AM('application'),
@@ -140,7 +139,7 @@ function buildWindow() {
         sourceText = [],
         formattedText = {},
         delimiter = "",
-        headers = []
+        headers = [];
     {
         var w = new Window("dialog{text: '" + strMessage + " " + rev + "', orientation: 'column', alignChildren: ['fill', 'top'], spacing: 10,margins: 16 }"),
             pnSource = w.add("panel{text:'" + strPnSource + "', orientation: 'column', alignChildren: ['left', 'top'], spacing: 10, margins:10   }"),
@@ -215,38 +214,28 @@ function buildWindow() {
     target = etRename
     {
         dlPreset.onChange = function () {
-            if (this.selection.index == 0) {
-                bnDel.enabled = false
-                if (renew) {
-                    var a = preset.putSettingsToArray(new Config)
-                    preset.putArrayToSettings(cfg, a)
-                    w.onShow(true)
-                }
-            } else {
-                bnDel.enabled = true
-                if (renew) {
-                    var a = preset.getPreset(this.selection.text)
-                    preset.putArrayToSettings(cfg, a)
-                    w.onShow(true)
-                }
+            bnDel.enabled = this.selection.index;
+            cfg.preset = this.selection.text;
+            if (renew) {
+                this.selection.index == 0 ?
+                    preset.putArrayToSettings(cfg, preset.putSettingsToArray(new Config)) :
+                    preset.putArrayToSettings(cfg, preset.getPreset(this.selection.text));
+                w.onShow(true);
             }
-            cfg.preset = this.selection.text
-            if (w.visible) { cfg.putScriptSettings(cfg) }
+            if (w.visible) cfg.putScriptSettings(cfg)
             preset.checkPresetIntegrity(w)
         }
         bnSave.onClick = function () {
-            var a = preset.putSettingsToArray(cfg)
-            var nm = dlPreset.selection.text
-            preset.putPreset(nm, a, "save")
-            cfg.putScriptSettings(cfg)
+            preset.putPreset(dlPreset.selection.text, preset.putSettingsToArray(cfg), "save")
             preset.checkPresetIntegrity(w)
+            cfg.putScriptSettings(cfg)
         }
         bnSaveAs.onClick = function () {
-            var a = preset.putSettingsToArray(cfg)
+            var cur = preset.putSettingsToArray(cfg)
             nm = prompt(strPresetPromt, dlPreset.selection.text + strPresetCopy, strPresetNew);
             if (nm != null && nm != "") {
                 if (preset.getPreset(nm) == "" && nm != strPresetDefailt) {
-                    preset.putPreset(nm, a, "add")
+                    preset.putPreset(nm, cur, "add")
                     loadPresets()
                     renew = false;
                     dlPreset.selection = dlPreset.find(nm)
@@ -254,7 +243,7 @@ function buildWindow() {
                 } else {
                     if (nm != strPresetDefailt) {
                         if (confirm(localize(strErrPreset, nm), false, strPresetNew)) {
-                            preset.putPreset(nm, a, "save")
+                            preset.putPreset(nm, cur, "save")
                             renew = false;
                             dlPreset.selection = dlPreset.find(nm)
                             renew = true;
@@ -266,58 +255,42 @@ function buildWindow() {
             preset.checkPresetIntegrity(w)
         }
         bnDel.onClick = function () {
-            var a = preset.putSettingsToArray(cfg)
-            var nm = dlPreset.selection.text
-            var num = dlPreset.selection.index
-            preset.putPreset(nm, a, "delete")
+            var num = dlPreset.selection.index;
+            preset.putPreset(dlPreset.selection.text, preset.putSettingsToArray(cfg), "delete")
             loadPresets()
-            num = num > dlPreset.items.length - 1 ? dlPreset.items.length - 1 : num
-            dlPreset.selection = num
+            dlPreset.selection = num > dlPreset.items.length - 1 ? dlPreset.items.length - 1 : num
             cfg.putScriptSettings(cfg)
             preset.checkPresetIntegrity(w)
         }
         bnRefresh.onClick = function () { dlPreset.onChange() }
     }
     rbFiles.onClick = function () {
-        cfg.globalMode = false
-        chSubfolder.text = cfg.globalMode ? strSourceAllDocuments : strSourceSubdir;
-        stFileFilter.text = cfg.globalMode ? strSourceFilterLayers : strSourceFilterFiles;
-        bnFile.text = '[N] ' + (cfg.globalMode ? strPatternLayer : strPatternFile);
-        bnFolder.text = '[P] ' + (cfg.globalMode ? strPatternDocument : strPatternFolder);
-        chSubfolder.value = cfg.useSubfolders
-        grBrowse.enabled = true
+        changeGlobalMode(false)
         etSource.text = cfg.targetPath
         app.doProgress(strBnSearch, "enumFiles(Folder(fromBridge.folder ? fromBridge.folder : cfg.sourcePath))")
         checkButtonsState()
     }
     rbLayers.onClick = function () {
-        cfg.globalMode = true
-        chSubfolder.text = cfg.globalMode ? strSourceAllDocuments : strSourceSubdir;
-        stFileFilter.text = cfg.globalMode ? strSourceFilterLayers : strSourceFilterFiles;
-        bnFile.text = '[N] ' + (cfg.globalMode ? strPatternLayer : strPatternFile);
-        bnFolder.text = '[P] ' + (cfg.globalMode ? strPatternDocument : strPatternFolder);
-        chSubfolder.value = cfg.useAllDocuments
-        grBrowse.enabled = !cfg.useAllDocuments
+        changeGlobalMode(true)
         enumLayers(doc.getProperty('title'))
         checkButtonsState()
     }
-    ch1.onClick = function () { cfg.filterCyrillic = this.value; dlMode.onChange() }
-    ch2.onClick = function () { cfg.filterLatin = this.value; dlMode.onChange() }
-    ch3.onClick = function () { cfg.filterDigits = this.value; dlMode.onChange() }
-    ch4.onClick = function () { cfg.filterDot = this.value; dlMode.onChange() }
-    ch5.onClick = function () { cfg.filterComma = this.value; dlMode.onChange() }
-    ch6.onClick = function () { cfg.filterColon = this.value; dlMode.onChange() }
-    ch7.onClick = function () { cfg.filterBracket = this.value; dlMode.onChange() }
-    ch8.onClick = function () { cfg.filterOther = this.value; dlMode.onChange() }
+    ch1.onClick = function () { filterSymbols(this, 'filterCyrillic') }
+    ch2.onClick = function () { filterSymbols(this, 'filterLatin') }
+    ch3.onClick = function () { filterSymbols(this, 'filterDigits') }
+    ch4.onClick = function () { filterSymbols(this, 'filterDot') }
+    ch5.onClick = function () { filterSymbols(this, 'filterComma') }
+    ch6.onClick = function () { filterSymbols(this, 'filterColon') }
+    ch7.onClick = function () { filterSymbols(this, 'filterBracket') }
+    ch8.onClick = function () { filterSymbols(this, 'filterOther') }
     bnSource.onClick = function () {
         if (cfg.globalMode) {
             enumLayers(selectDocumentWindow());
-            checkButtonsState()
         } else {
             var fol = new Folder(cfg.sourcePath)
             app.doProgress(strBnSearch, "enumFiles(fol.selectDlg())")
-            checkButtonsState()
         }
+        checkButtonsState()
     }
     bnAddList.onClick = function () {
         var fle = new File,
@@ -344,11 +317,9 @@ function buildWindow() {
         var result = searchWindow(formattedText.text, headers)
         if (result != null) {
             w.close();
-            if (cfg.globalMode) {
-                app.doForcedProgress(strBnSearchRename, 'renameLayers(result.found)')
-            } else {
-                app.doProgress(strBnSearchRename, "moveFiles(result.found)")
-            }
+            cfg.globalMode ?
+                app.doForcedProgress(strBnSearchRename, 'renameLayers(result.found)') :
+                app.doProgress(strBnSearchRename, "moveFiles(result.found)");
         }
     }
     cancel.onClick = function () { w.close(2) }
@@ -438,12 +409,8 @@ function buildWindow() {
         cfg.divider = this.selection.index
         if (renew) dlMode.onChange()
     }
-    etRename.addEventListener('focus', commonHandler)
-    etSearch.addEventListener('focus', commonHandler)
-    function commonHandler(evt) {
-        target = evt.target
-        bnFile.enabled = bnFolder.enabled = bnHeader.enabled = evt.target == etRename ? true : false
-    }
+    etRename.addEventListener('focus', eventHandler)
+    etSearch.addEventListener('focus', eventHandler)
     bnWord.onClick = function () {
         var result = insertWord();
         if (result) target.textselection = result;
@@ -458,9 +425,9 @@ function buildWindow() {
         textList.onClick();
         target.active = true
     }
-    bnFile.onClick = function () { etRename.textselection = "[F]"; textList.onClick(); etRename.active = true }
-    bnFolder.onClick = function () { etRename.textselection = "[P]"; textList.onClick(); etRename.active = true }
-    bnHeader.onClick = function () { etRename.textselection = "[H]"; textList.onClick(); etRename.active = true }
+    bnFile.onClick = function () { etRename.textselection = "[F]"; textList.onClick() }
+    bnFolder.onClick = function () { etRename.textselection = "[P]"; textList.onClick() }
+    bnHeader.onClick = function () { etRename.textselection = "[H]"; textList.onClick() }
     etRename.onChanging = function () { textList.onClick(); }
     etSearch.onChanging = function () { textList.onClick(); }
     dlFilter.onChange = function () { if (cfg.globalMode) cfg.layerFilter = this.selection.text else cfg.fileFilter = this.selection.text }
@@ -488,7 +455,8 @@ function buildWindow() {
             stPreviewRename.size.width = stPreviewSearch.size.width = pnOptions.size.width - grLabels.size.width - 35
             chSubfolder.size.width = etSource.size.width - dlFilter.size.width - stFileFilter.size.width - 20
             w.layout.layout(true)
-            if (!apl.getProperty('numberOfDocuments') && cfg.globalMode) {
+            if (fromBridge.folder) cfg.globalMode = false
+            if (!apl.getProperty('numberOfDocuments')) {
                 cfg.globalMode = false
                 rbLayers.enabled = false
             }
@@ -516,6 +484,28 @@ function buildWindow() {
         ch8.value = cfg.filterOther == undefined ? 1 : cfg.filterOther
         textList.onClick()
         renew = true
+    }
+    function eventHandler(evt) {
+        target = evt.target
+        bnFile.enabled = bnFolder.enabled = bnHeader.enabled = evt.target == etRename ? true : false
+    }
+    function changeGlobalMode(mode) {
+        cfg.globalMode = mode
+        chSubfolder.text = mode ? strSourceAllDocuments : strSourceSubdir;
+        stFileFilter.text = mode ? strSourceFilterLayers : strSourceFilterFiles;
+        bnFile.text = '[N] ' + (mode ? strPatternLayer : strPatternFile);
+        bnFolder.text = '[P] ' + (mode ? strPatternDocument : strPatternFolder);
+        if (mode) {
+            chSubfolder.value = cfg.useAllDocuments
+            grBrowse.enabled = !cfg.useAllDocuments
+        } else {
+            chSubfolder.value = cfg.useSubfolders
+            grBrowse.enabled = true
+        }
+    }
+    function filterSymbols(obj, filter) {
+        cfg[filter] = obj.value;
+        dlMode.onChange();
     }
     function checkButtonsState() {
         ok.enabled = textList.items.length != 0 && etSource.text != "" && etSearch.text != "" ? true : false
@@ -948,7 +938,9 @@ function searchWindow(s, h) {
     ok.onClick = function () { w.close() }
     cancel.onClick = function () { result = null; w.close() }
     w.onShow = function () {
-        if (!cfg.globalMode) {
+        if (cfg.globalMode) {
+            findLayer(s, h, allFiles, cfg.layerFilter, result)
+        } else {
             chMove.value = cfg.move
             chSourceAsTarget.value = cfg.useSameFolder
             etTarget.enabled = bnTarget.enabled = !chSourceAsTarget.value
@@ -964,11 +956,11 @@ function searchWindow(s, h) {
                 }
             }
             for (var a in allFiles) { if (a) break; }
-            if (!a) allFiles = {}
-            app.doProgress(strPatternSearch, "findAllFiles(cfg.sourcePath, allFiles, cfg.useSubfolders)")
+            if (!a) {
+                allFiles = {}
+                app.doProgress(strPatternSearch, "findAllFiles(cfg.sourcePath, allFiles, cfg.useSubfolders)")
+            }
             app.doProgress("", "findFile (s, h, allFiles, cfg.fileFilter, result)")
-        } else {
-            findLayer(s, h, allFiles, cfg.layerFilter, result)
         }
         renewList()
     }
@@ -1229,19 +1221,6 @@ function findAllFiles(srcFolder, fileObj, useSubfolders) {
         for (var i = 0; i < subfolderArray.length; i++) findAllFiles(subfolderArray[i], fileObj, useSubfolders)
     }
 }
-function putFileToTypeObject(fileName, fileObj) {
-    var f = fileName.fsName.toString().toUpperCase()
-    var lastDot = f.lastIndexOf(".")
-    if (lastDot == -1) return false
-    var ext = f.substr(lastDot + 1, f.length - lastDot),
-        un = decodeURI(File(f).name),
-        n = decodeURI(fileName.name),
-        e = fileName.fsName.substr(lastDot + 1, fileName.fsName.length - lastDot)
-    un = un.substr(0, un.length - (f.length - lastDot))
-    n = n.substr(0, n.length - (fileName.fsName.length - lastDot))
-    if (!fileObj.hasOwnProperty(ext)) fileObj[ext] = []
-    fileObj[ext].push({ file: fileName, uCaseName: un, name: n, ext: e })
-}
 function findAllLayers(lrsObj, idx) {
     var doc = new AM('document'),
         lr = new AM('layer'),
@@ -1262,6 +1241,19 @@ function findAllLayers(lrsObj, idx) {
             file: new File(parent + '/' + nm)
         })
     }
+}
+function putFileToTypeObject(fileName, fileObj) {
+    var f = fileName.fsName.toString().toUpperCase()
+    var lastDot = f.lastIndexOf(".")
+    if (lastDot == -1) return false
+    var ext = f.substr(lastDot + 1, f.length - lastDot),
+        un = decodeURI(File(f).name),
+        n = decodeURI(fileName.name),
+        e = fileName.fsName.substr(lastDot + 1, fileName.fsName.length - lastDot)
+    un = un.substr(0, un.length - (f.length - lastDot))
+    n = n.substr(0, n.length - (fileName.fsName.length - lastDot))
+    if (!fileObj.hasOwnProperty(ext)) fileObj[ext] = []
+    fileObj[ext].push({ file: fileName, uCaseName: un, name: n, ext: e })
 }
 function buildShortcutList(fileObj) {
     var output = [cfg.globalMode ? strSourceAllLayers : strSourceAllFiles]
@@ -1540,6 +1532,8 @@ function formatLine(s) {
     return s
 }
 function Preset() {
+    var s2t = stringIDToTypeID,
+        t2s = typeIDToStringID;
     this.putPreset = function (key, val, mode) {
         var output = this.getPresetList()
         switch (mode) {
@@ -1599,8 +1593,6 @@ function Preset() {
         s.mode = a[1] ? Number(a[1]) : 0
     }
 }
-function s2t(s) { return stringIDToTypeID(s) }
-function t2s(t) { return typeIDToStringID(t) }
 function AM(target, order) {
     var s2t = stringIDToTypeID,
         t2s = typeIDToStringID;
