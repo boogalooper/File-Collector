@@ -963,8 +963,8 @@ function searchWindow(s, h) {
                     cfg.targetPath = etTarget.text = cfg.sourcePath
                 }
             }
-            allFiles = {}
-            // добавить проверку на заполненность
+            for (var a in allFiles) { if (a) break; }
+            if (!a) allFiles = {}
             app.doProgress(strPatternSearch, "findAllFiles(cfg.sourcePath, allFiles, cfg.useSubfolders)")
             app.doProgress("", "findFile (s, h, allFiles, cfg.fileFilter, result)")
         } else {
