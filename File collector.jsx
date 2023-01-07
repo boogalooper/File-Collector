@@ -17,7 +17,7 @@ $.localize = true
 //$.locale = "ru"
 {
     var strMessage = "File collector",
-        rev = "0.8",
+        rev = "0.81",
         GUID = "808f4b96-50f3-4ff3-b00f-bc4189e89c5c",
         strBnBrowse = { ru: "Обзор...", en: "Browse..." },
         strBnCancel = { ru: "Отмена", en: "Cancel" },
@@ -99,7 +99,7 @@ $.localize = true
         fromBridge = {},
         layerKindArray =
             [
-                5, //const kAnySheet             = 0; 
+                6, //const kAnySheet             = 0; 
                 0, //const kPixelSheet           = 1;  
                 3, //const kAdjustmentSheet      = 2;  
                 2, //const kTextSheet            = 3;  
@@ -112,14 +112,16 @@ $.localize = true
                 3, //const kPatternSheet         = 10;  
                 3, //const kSolidColorSheet      = 11;  
                 0, //const kBackgroundSheet      = 12;  
-                5 //const kHiddenSectionBounder = 13;  
+                6 //const kHiddenSectionBounder = 13;  
             ],
         layerTypesArray = [
             { ru: 'пиксельный слой', en: 'pixel layer' },
             { ru: 'смарт объект', en: 'smart Object' },
             { ru: 'текст', en: 'text' },
             { ru: 'настраиваемый слой', en: 'adjustment layer' },
-            { ru: 'группа', en: 'group' }
+            { ru: 'группа', en: 'group' },
+            { ru: "выделенные слои", en: "selected layers" },
+            'hidden layers'
         ];
 }
 if (app.playbackParameters.count) {
@@ -139,7 +141,8 @@ function buildWindow() {
         sourceText = [],
         formattedText = {},
         delimiter = "",
-        headers = [];
+        headers = [],
+        typesArray = [];
     {
         var w = new Window("dialog{text: '" + strMessage + " " + rev + "', orientation: 'column', alignChildren: ['fill', 'top'], spacing: 10,margins: 16 }"),
             pnSource = w.add("panel{text:'" + strPnSource + "', orientation: 'column', alignChildren: ['left', 'top'], spacing: 10, margins:10   }"),
@@ -430,7 +433,15 @@ function buildWindow() {
     bnHeader.onClick = function () { etRename.textselection = "[H]"; textList.onClick() }
     etRename.onChanging = function () { textList.onClick(); }
     etSearch.onChanging = function () { textList.onClick(); }
-    dlFilter.onChange = function () { if (cfg.globalMode) cfg.layerFilter = this.selection.text else cfg.fileFilter = this.selection.text }
+    dlFilter.onChange = function () {
+        if (cfg.globalMode) {
+            cfg.layerFilter = typesArray[this.selection.index]
+        }
+        else {
+            cfg.fileFilter = typesArray[this.selection.index]
+            $.writeln(cfg.fileFilter)
+        }
+    }
     chSubfolder.onClick = function () {
         if (cfg.globalMode) {
             grBrowse.enabled = !this.value
@@ -495,6 +506,7 @@ function buildWindow() {
         stFileFilter.text = mode ? strSourceFilterLayers : strSourceFilterFiles;
         bnFile.text = '[N] ' + (mode ? strPatternLayer : strPatternFile);
         bnFolder.text = '[P] ' + (mode ? strPatternDocument : strPatternFolder);
+        dlFilter.removeAll();
         if (mode) {
             chSubfolder.value = cfg.useAllDocuments
             grBrowse.enabled = !cfg.useAllDocuments
@@ -603,11 +615,17 @@ function buildWindow() {
                 allFiles = {}
                 cfg.sourcePath = etSource.text = currentFolder.fsName.toString()
                 app.doProgress(strPatternSearch, "findAllFiles(cfg.sourcePath, allFiles, cfg.useSubfolders)")
-                var typesArray = buildShortcutList(allFiles),
-                    len = typesArray.length;
+                typesArray = buildShortcutList(allFiles);
+                var len = typesArray.length;
                 dlFilter.removeAll()
-                for (var i = 0; i < len; i++) dlFilter.add("item", typesArray[i])
-                dlFilter.selection = dlFilter.find(cfg.fileFilter) != null ? dlFilter.find(cfg.fileFilter) : 0
+                var counter = 0;
+                for (var i = 1; i < len; i++) {
+                    var cur = allFiles[typesArray[i]].length
+                    dlFilter.add("item", typesArray[i] + ' (' + cur + ')')
+                    counter += cur;
+                }
+                dlFilter.add("item", typesArray[0] + ' (' + counter + ')', 0)
+                dlFilter.selection = findTypeIndex(typesArray, cfg.fileFilter) != -1 ? findTypeIndex(typesArray, cfg.fileFilter) : 0
                 if (w.visible || fromBridge.file || fromBridge.folder) {
                     if (allFiles["TXT"] != undefined || allFiles["CSV"] != undefined) {
                         allFiles["CSV"] == undefined ? [] : allFiles["CSV"]
@@ -642,14 +660,25 @@ function buildWindow() {
                     findAllLayers(allFiles, doc.getProperty('itemIndex', i, true));
                 }
             }
-            var typesArray = buildShortcutList(allFiles),
-                len = typesArray.length;
+            typesArray = buildShortcutList(allFiles);
+            var len = typesArray.length;
             dlFilter.removeAll()
-            for (var i = 0; i < len; i++) dlFilter.add("item", typesArray[i])
-            dlFilter.selection = dlFilter.find(cfg.layerFilter) != null ? dlFilter.find(cfg.layerFilter) : 0
+            var counter = 0;
+            for (var i = 1; i < len; i++) {
+                var cur = allFiles[findTypeIndex(layerTypesArray, typesArray[i])].length;
+                dlFilter.add("item", typesArray[i] + ' (' + cur + ')')
+                if (typesArray[i] != layerTypesArray[5]) counter += cur;
+            }
+            dlFilter.add("item", typesArray[0] + ' (' + counter + ')', 0)
+            dlFilter.selection = findTypeIndex(typesArray, cfg.layerFilter) != -1 ? findTypeIndex(typesArray, cfg.layerFilter) : 0
+            if (cfg.globalMode && findTypeIndex(typesArray, layerTypesArray[5]) && allFiles[5].length > 1) dlFilter.selection = findTypeIndex(typesArray, layerTypesArray[5])
             return true
         }
         return false
+    }
+    function findTypeIndex(shortcuts, f) {
+        for (var i = 0; i < shortcuts.length; i++) { if (shortcuts[i] == f) return i }
+        return -1
     }
     function previewList(s) {
         if (cfg.globalMode) {
@@ -1227,7 +1256,6 @@ function findAllLayers(lrsObj, idx) {
         from = doc.getProperty('hasBackgroundLayer', idx, true) ? 0 : 1,
         to = doc.getProperty('numberOfLayers', idx, true);
     for (var i = from; i <= to; i++) {
-        if (lr.getProperty('layerSection', i, true, idx, 'document').value == 'layerSectionEnd') continue;
         var kind = layerKindArray[lr.getProperty('layerKind', i, true, idx, 'document')];
         if (!lrsObj[kind]) lrsObj[kind] = [];
         var nm = lr.getProperty('name', i, true, idx, 'document'),
@@ -1241,6 +1269,24 @@ function findAllLayers(lrsObj, idx) {
             file: new File(parent + '/' + nm)
         })
     }
+    var targetLayers = doc.getProperty('targetLayers', idx, true);
+    if (targetLayers.count) {
+        if (!lrsObj[5]) lrsObj[5] = [];
+        for (var i = 0; i < targetLayers.count; i++) {
+            var index = targetLayers.getReference(i).getIndex() + from,
+                nm = lr.getProperty('name', index, true, idx, 'document'),
+                parent = doc.getProperty('title', idx, true).replace(/\.\S+$/, "");
+            lrsObj[5].push({
+                name: nm,
+                uCaseName: nm.toUpperCase(),
+                id: lr.getProperty('layerID', index, true, idx, 'document'),
+                parentID: doc.getProperty('documentID', idx, true),
+                parentName: parent,
+                file: new File(parent + '/' + nm)
+            })
+        }
+    }
+    b = 0
 }
 function putFileToTypeObject(fileName, fileObj) {
     var f = fileName.fsName.toString().toUpperCase()
@@ -1258,7 +1304,7 @@ function putFileToTypeObject(fileName, fileObj) {
 function buildShortcutList(fileObj) {
     var output = [cfg.globalMode ? strSourceAllLayers : strSourceAllFiles]
     for (a in fileObj) {
-        if (fileObj[a][0] != undefined && a != "TXT" && a != "CSV" && a != "XMP") output.push(cfg.globalMode ? layerTypesArray[a] : a)
+        if (fileObj[a][0] != undefined && a != "TXT" && a != "CSV" && a != "XMP" && a != 6) output.push(cfg.globalMode ? layerTypesArray[a] : a)
     }
     return output
 }
