@@ -469,6 +469,7 @@ function buildWindow() {
         dlMode.selection = 0
         textList.selection = 0
         if (!cfg.mode) progress.close();
+        checkButtonsState()
     }
 
     dlFilter.onChange = function () {
