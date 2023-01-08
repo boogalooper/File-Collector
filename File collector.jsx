@@ -17,7 +17,7 @@ $.localize = true
 //$.locale = "ru"
 {
     var strMessage = "File collector",
-        rev = "0.81",
+        rev = "0.82",
         GUID = "808f4b96-50f3-4ff3-b00f-bc4189e89c5c",
         strBnBrowse = { ru: "Обзор...", en: "Browse..." },
         strBnCancel = { ru: "Отмена", en: "Cancel" },
@@ -439,7 +439,6 @@ function buildWindow() {
         }
         else {
             cfg.fileFilter = typesArray[this.selection.index]
-            $.writeln(cfg.fileFilter)
         }
     }
     chSubfolder.onClick = function () {
@@ -1334,11 +1333,9 @@ function parseExpression(e, s, f, h) {
     } else {
         for (var i = 0; i < len; i++) {
             a[i] = getValue(a[i])
-            var c = e.replace(buildRegExp(a[i]), getWord(a[i], line)).replace(/\[\d+\]|\[\d*-\d*\]|\[F\]|\[P\]|\[H\]/g, '').replace(/[\[\]]/g, ''),
-                r = getSearchObj(a[i], c, h)
-            if (r.text) searchResult.push(r)
-            e = e.replace(buildRegExp(a[i]), '')
+            e = e.replace(buildRegExp(a[i], "g"), getWord(a[i], line))
         }
+        if (len && !e.match(/\[\d*-\d*\]/g)) searchResult.push({ text: e, header: h })
     }
     if (f) {
         a = e.match(/\[N\]/g)
@@ -1385,8 +1382,14 @@ function parseExpression(e, s, f, h) {
             from = tmp[0] != '' ? Number(tmp[0]) - 1 : 0,
             to = tmp[1] != '' ? Number(tmp[1]) - 1 : s.length,
             c = [];
-        for (var i = from; i <= to; i++) {
-            if (searchMode ? i + 1 : s[i]) c.push(searchMode ? i + 1 : s[i])
+        if (to >= from) {
+            for (var i = from; i <= to; i++) {
+                if (searchMode ? i + 1 : s[i]) c.push(searchMode ? i + 1 : s[i])
+            }
+        } else {
+            for (var i = from; i >= to; i--) {
+                if (searchMode ? i + 1 : s[i]) c.push(searchMode ? i + 1 : s[i])
+            }
         }
         if (searchMode) return c
         return c.length ? c.join(' ') : ''
