@@ -17,7 +17,7 @@ $.localize = true
 //$.locale = "ru"
 {
     var strMessage = "File collector",
-        rev = "0.83",
+        rev = "0.832",
         GUID = "808f4b96-50f3-4ff3-b00f-bc4189e89c5c",
         strBnBrowse = { ru: "Обзор...", en: "Browse..." },
         strBnCancel = { ru: "Отмена", en: "Cancel" },
@@ -1158,7 +1158,7 @@ function searchWindow(s, h) {
                 for (var n = 0; n < curSearch.length; n++) {
                     var currentResult = []
                     for (a in layers) {
-                        if (layers[a][0] != undefined && a != 5) {
+                        if (layers[a][0] != undefined && a != 6) {
                             if (layerTypesArray[a] == filter || filter == strSourceAllLayers.ru || filter == strSourceAllLayers.en) {
                                 var filesLength = layers[a].length
                                 for (var z = 0; z < filesLength; z++) {
