@@ -1309,7 +1309,7 @@ function buildShortcutList(fileObj) {
 }
 function parseExpression(e, s, f, h) {
     if (s == undefined) return ''
-    if (e == '') e = "[F]"
+    if (e == '') e = "[N]"
     if (!cfg.globalMode) {
         e = e.replace(/[:*\?\"\<\>\|\#]/g, "_")
         if ($.os.search(/windows/i) == -1) {
