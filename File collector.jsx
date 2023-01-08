@@ -17,7 +17,7 @@ $.localize = true
 //$.locale = "ru"
 {
     var strMessage = "File collector",
-        rev = "0.82",
+        rev = "0.83",
         GUID = "808f4b96-50f3-4ff3-b00f-bc4189e89c5c",
         strBnBrowse = { ru: "Обзор...", en: "Browse..." },
         strBnCancel = { ru: "Отмена", en: "Cancel" },
@@ -89,6 +89,7 @@ $.localize = true
         strSourceFilterLayers = { ru: "- искать следующие типы слоев", en: "- search following layer types" },
         strSourceLayers = { ru: "слои", en: "layers" },
         strSourceSubdir = { ru: "учитывать подкаталоги", en: "include subdirectories" },
+        strBnFillList = { ru: "Заполнить из источника", en: "Fill from source" },
         strBnAddList = { ru: "Загрузить список из файла", en: "Load list from file" },
         cfg = new Config,
         preset = new Preset,
@@ -160,6 +161,7 @@ function buildWindow() {
             grList = pnList.add("group{orientation: 'column',alignChildren: ['left', 'fill'],spacing: 5,margins: 0 }"),
             grListButtons = grList.add("group{orientation: 'row', alignChildren: ['center', 'top'], spacing: 5, margins: 0}"),
             bnAddList = grListButtons.add("button{text:'" + strbnOpenList + "' }"),
+            bnFillList = grListButtons.add("button{text:'" + strBnFillList + "' }"),
             bnEditList = grListButtons.add("button{text:'" + strbnListEdit + "'}"),
             stDiv = grListButtons.add("statictext"),
             dlMode = grListButtons.add("dropdownlist", undefined, [strListModeText, strListModeHeaders]),
@@ -303,6 +305,7 @@ function buildWindow() {
             dlMode.selection = null
             formattedText = buildList(sourceText)
             dlMode.selection = cfg.listMode
+            textList.selection = 0
         }
         checkButtonsState()
     }
@@ -433,6 +436,41 @@ function buildWindow() {
     bnHeader.onClick = function () { etRename.textselection = "[H]"; textList.onClick() }
     etRename.onChanging = function () { textList.onClick(); }
     etSearch.onChanging = function () { textList.onClick(); }
+    bnFillList.onClick = function () {
+        var s = [];
+        if (!cfg.mode) {
+            var progress = progressWindow(strBnFillList, dlFilter.items.length + 1)
+            progress.show()
+        }
+        for (var a in allFiles) {
+            if (!cfg.mode) progress.updateProgress()
+            if (allFiles[a].length) {
+
+                if (cfg.globalMode) {
+                    if (!cfg.layerFilter || cfg.layerFilter == strSourceAllLayers.en || cfg.layerFilter == strSourceAllLayers.ru || cfg.layerFilter == layerTypesArray[a]) {
+                        for (var i = 0; i < allFiles[a].length; i++) {
+                            s.push(allFiles[a][i].name)
+                        }
+
+                    }
+                } else
+                    if (!cfg.fileFilter || cfg.fileFilter == strSourceAllFiles.en || cfg.fileFilter == strSourceAllFiles.ru || cfg.fileFilter == a) {
+                        for (var i = 0; i < allFiles[a].length; i++) {
+                            s.push(allFiles[a][i].name)
+                        }
+
+                    }
+            }
+        }
+        if (!cfg.mode) progress.updateProgress()
+        dlMode.selection = null
+        sourceText = s;
+        formattedText = buildList(sourceText)
+        dlMode.selection = 0
+        textList.selection = 0
+        if (!cfg.mode) progress.close();
+    }
+
     dlFilter.onChange = function () {
         if (cfg.globalMode) {
             cfg.layerFilter = typesArray[this.selection.index]
@@ -449,8 +487,8 @@ function buildWindow() {
         }
         else {
             grBrowse.enabled = true
-            if (etSource.text != '') enumFiles(Folder(cfg.sourcePath))
             cfg.useSubfolders = this.value;
+            if (etSource.text != '') enumFiles(Folder(cfg.sourcePath))
         }
     }
     w.onShow = function (fromPreset) {
@@ -458,7 +496,7 @@ function buildWindow() {
         if (!fromPreset) {
             etSource.size.width = pnSource.size.width - bnSource.size.width - 30
             textList.size.width = pnList.size.width - 20
-            stDiv.size.width = pnList.size.width - bnAddList.size.width - bnEditList.size.width - dlMode.size.width - 35
+            stDiv.size.width = pnList.size.width - bnAddList.size.width - bnEditList.size.width - dlMode.size.width - bnFillList.size.width - 45
             stDiv2.size.width = pnList.size.width - dlDiv.size.width - 25
             stRename.size.width = pnOptions.size.width - grSearch.size.width - 30
             dlPreset.size.width = pnOptions.size.width - grPresetButtons.size.width - stPreset.size.width - 40
@@ -521,6 +559,7 @@ function buildWindow() {
     }
     function checkButtonsState() {
         ok.enabled = textList.items.length != 0 && etSource.text != "" && etSearch.text != "" ? true : false
+        bnFillList.enabled = dlFilter.items.length;
     }
     function buildList(list) {
         var text = [],
@@ -624,7 +663,7 @@ function buildWindow() {
                     dlFilter.add("item", typesArray[i] + ' (' + cur + ')')
                     counter += cur;
                 }
-                dlFilter.add("item", typesArray[0] + ' (' + counter + ')', 0)
+                if (counter) dlFilter.add("item", typesArray[0] + ' (' + counter + ')', 0)
                 dlFilter.selection = findTypeIndex(typesArray, cfg.fileFilter) != -1 ? findTypeIndex(typesArray, cfg.fileFilter) : 0
                 if (w.visible || fromBridge.file || fromBridge.folder) {
                     if (allFiles["TXT"] != undefined || allFiles["CSV"] != undefined) {
@@ -669,7 +708,7 @@ function buildWindow() {
                 dlFilter.add("item", typesArray[i] + ' (' + cur + ')')
                 if (typesArray[i] != layerTypesArray[5]) counter += cur;
             }
-            dlFilter.add("item", typesArray[0] + ' (' + counter + ')', 0)
+            if (counter) dlFilter.add("item", typesArray[0] + ' (' + counter + ')', 0)
             dlFilter.selection = findTypeIndex(typesArray, cfg.layerFilter) != -1 ? findTypeIndex(typesArray, cfg.layerFilter) : 0
             if (cfg.globalMode && findTypeIndex(typesArray, layerTypesArray[5]) && allFiles[5].length > 1) dlFilter.selection = findTypeIndex(typesArray, layerTypesArray[5])
             return true
@@ -1071,16 +1110,6 @@ function searchWindow(s, h) {
             f[i].target = createUniqueFileName(f, f[i])
         }
         if (len > 100) progress.close();
-        function progressWindow(title, max) {
-            var w = new Window('palette', title),
-                bar = w.add('progressbar', undefined, 0, max);
-            bar.preferredSize = [350, 20]
-            w.updateProgress = function () {
-                bar.value++;
-                w.update();
-            }
-            return w;
-        }
     }
     function generateLayerNames(f) {
         var len = f.length;
@@ -1411,6 +1440,16 @@ function parseExpression(e, s, f, h) {
 function parseHeader(s, c) {
     if (s.match(/\[H\]/) == null) return s.replace(/[\[\]]/g, '')
     return s.replace(/\[H\]/g, c).replace(/[\[\]]/g, '')
+}
+function progressWindow(title, max) {
+    var w = new Window('palette', title),
+        bar = w.add('progressbar', undefined, 0, max);
+    bar.preferredSize = [350, 20]
+    w.updateProgress = function () {
+        bar.value++;
+        w.update();
+    }
+    return w;
 }
 function Config() {
     this.globalMode = false
