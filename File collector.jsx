@@ -1341,7 +1341,7 @@ function parseExpression(e, s, f, h) {
         }
     }
     if (f) {
-        a = e.match(/\[F\]/g)
+        a = e.match(/\[N\]/g)
         len = a ? a.length : 0
         for (var i = 0; i < len; i++) {
             var fle = decodeURI(f.name).replace(/\.\S+$/, "")
