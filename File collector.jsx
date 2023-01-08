@@ -506,6 +506,7 @@ function buildWindow() {
         bnFile.text = '[N] ' + (mode ? strPatternLayer : strPatternFile);
         bnFolder.text = '[P] ' + (mode ? strPatternDocument : strPatternFolder);
         dlFilter.removeAll();
+        if (textList.onClick) textList.onClick();
         if (mode) {
             chSubfolder.value = cfg.useAllDocuments
             grBrowse.enabled = !cfg.useAllDocuments
@@ -1418,7 +1419,7 @@ function Config() {
     this.useAllDocuments = false
     this.fileFilter = ""
     this.layerFilter = ""
-    this.options = "[3-]\n[F] [1-2]"
+    this.options = "[3-]\n[N] [1-2]"
     this.word = "1"
     this.interval = "1-2"
     this.useSameFolder = true
