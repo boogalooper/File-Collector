@@ -431,7 +431,7 @@ function buildWindow() {
         textList.onClick();
         target.active = true
     }
-    bnFile.onClick = function () { etRename.textselection = "[F]"; textList.onClick() }
+    bnFile.onClick = function () { etRename.textselection = "[N]"; textList.onClick() }
     bnFolder.onClick = function () { etRename.textselection = "[P]"; textList.onClick() }
     bnHeader.onClick = function () { etRename.textselection = "[H]"; textList.onClick() }
     etRename.onChanging = function () { textList.onClick(); }
@@ -1395,7 +1395,7 @@ function parseExpression(e, s, f, h) {
             a[i] = getValue(a[i])
             var t = getInterval(a[i], line, true)
             for (var n = 0; n < t.length; n++) {
-                var c = e.replace(buildRegExp(a[i]), getWord(t[n], line)).replace(/\[\d+\]|\[\d*-\d*\]|\[F\]|\[P\]|\[H\]/g, '').replace(/[\[\]]/g, ''),
+                var c = e.replace(buildRegExp(a[i]), getWord(t[n], line)).replace(/\[\d+\]|\[\d*-\d*\]|\[N\]|\[P\]|\[H\]/g, '').replace(/[\[\]]/g, ''),
                     r = getSearchObj(t[n], c, h)
                 if (r.text) searchResult.push(r)
             }
