@@ -17,7 +17,7 @@ $.localize = true
 //$.locale = "ru"
 {
     var strMessage = "File collector",
-        rev = "0.832",
+        rev = "0.833",
         GUID = "808f4b96-50f3-4ff3-b00f-bc4189e89c5c",
         strBnBrowse = { ru: "Обзор...", en: "Browse..." },
         strBnCancel = { ru: "Отмена", en: "Cancel" },
@@ -1085,7 +1085,10 @@ function searchWindow(s, h) {
             var progress = progressWindow(strSearchRefresh, 3)
             progress.show();
         }
-        for (var i = 0; i < f.length; i++) f[i].targetName = f[i].newName;
+        for (var i = 0; i < f.length; i++) {
+            f[i].target = decodeURI(File(targetPath + '/' + f[i].newName).parent)
+            f[i].targetName = decodeURI(File(targetPath + '/' + f[i].newName).name)
+        };
         if (len > 100) progress.updateProgress('')
         if (!cfg.duplicates) {
             for (var i = 0; i < len; i++) {
@@ -1103,7 +1106,7 @@ function searchWindow(s, h) {
         if (len > 100) progress.updateProgress('')
         for (var i = 0; i < len; i++) {
             if (!f[i].targetName) continue;
-            f[i].target = File(targetPath + '/' + f[i].targetName + '.' + f[i].source.ext).fsName
+            f[i].target = File(f[i].target + '/' + f[i].targetName + '.' + f[i].source.ext).fsName
         }
         if (len > 100) progress.updateProgress('')
         for (var i = 0; i < len; i++) {
