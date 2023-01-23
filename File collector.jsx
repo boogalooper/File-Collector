@@ -17,10 +17,11 @@ $.localize = true
 //$.locale = "ru"
 {
     var strMessage = "File collector",
-        rev = "0.833",
+        rev = "0.85",
         GUID = "808f4b96-50f3-4ff3-b00f-bc4189e89c5c",
         strBnBrowse = { ru: "Обзор...", en: "Browse..." },
         strBnCancel = { ru: "Отмена", en: "Cancel" },
+        strBnOk = { ru: "Ok", en: "Ok" },
         strbnListEdit = { ru: "Редактировать", en: "Edit" },
         strbnOpenList = { ru: "Открыть", en: "Open" },
         strBnSaveList = { ru: "Сохранить список в файл", en: "Save list to file" },
@@ -38,8 +39,12 @@ $.localize = true
         strErrPreset = { ru: "Набор с именем \"%1\" уже существует. Перезаписать?", en: "A set with the name \"%1\" already exists. Overwrite?" },
         strFilterHooks = { ru: "скобки", en: "hooks" },
         strFilterHyphen = { ru: "дефис", en: "hyphen" },
-        strFilterOther = { ru: "прочие символы", en: "other symbols" },
-        strFilterSymbols = { ru: "Показывать символы:", en: "Show symbols:" },
+        strFilterRegExp = { ru: "RegExp", en: "RegExp" },
+        strFilterRegExpSearch = { ru: "Поиск:", en: "Search:" },
+        strFilterRegExpReplace = { ru: "Замена:", en: "Replace:" },
+        strFilterRegExpI = { ru: "игнорировать регистр", en: "ignore case in pattern matching" },
+        strFilterRegExpG = { ru: "заменять все вхождения", en: "global pattern matching" },
+        strFilterSymbols = { ru: "Скрыть символы: ", en: "Hide symbols: " },
         strList = { ru: "Список", en: "List" },
         strListEditLine = { ru: "Редактировать исходную строку", en: "Edit source line" },
         strListMode = { ru: "Режим отображения:", en: "View mode:" },
@@ -174,7 +179,7 @@ function buildWindow() {
             ch5 = grSymbols.add("checkbox{text:'" + strDividerComma + "'}"),
             ch6 = grSymbols.add("checkbox{text:'" + strFilterHyphen + "'}"),
             ch7 = grSymbols.add("checkbox{text:'" + strFilterHooks + "'}"),
-            ch8 = grSymbols.add("checkbox{text:'" + strFilterOther + "'}"),
+            ch8 = grSymbols.add("checkbox{text:'" + strFilterRegExp + "'}"),
             grText = grList.add("group{orientation: 'row', alignChildren: ['left', 'fill'], spacing: 0, margins: 0}"),
             textList = grText.add("listbox{preferredSize: [500, 200]}"),
             grListAdditionalButtons = pnList.add("group{orientation: 'row', alignChildren: ['center', 'top'], spacing: 5, margins: 0}"),
@@ -287,7 +292,10 @@ function buildWindow() {
     ch5.onClick = function () { filterSymbols(this, 'filterComma') }
     ch6.onClick = function () { filterSymbols(this, 'filterColon') }
     ch7.onClick = function () { filterSymbols(this, 'filterBracket') }
-    ch8.onClick = function () { filterSymbols(this, 'filterOther') }
+    ch8.onClick = function () {
+        if (this.value) { if (!regExpFilter()) this.value = false }
+        filterSymbols(this, 'filterRegexp')
+    }
     bnSource.onClick = function () {
         if (cfg.globalMode) {
             enumLayers(selectDocumentWindow());
@@ -331,7 +339,6 @@ function buildWindow() {
     cancel.onClick = function () { w.close(2) }
     dlMode.onChange = function () {
         if (this.selection == undefined) return;
-        cfg.listMode = this.selection.index
         if (w.visible) preset.checkPresetIntegrity(w)
         formattedText = buildList(sourceText)
         var columns = 0,
@@ -348,7 +355,8 @@ function buildWindow() {
             }
         }
         var props = { numberOfColumns: columns, showHeaders: true, columnTitles: [], columnWidths: [] },
-            shift = cfg.listMode ? -1 : 1
+            shift = cfg.listMode ? 1 : -1;
+        cfg.listMode = this.selection.index
         sel = textList.selection != null ? textList.selection.index + shift : 0
         headers = []
         if (cfg.listMode && text.length > 0) {
@@ -445,20 +453,17 @@ function buildWindow() {
         for (var a in allFiles) {
             if (!cfg.mode) progress.updateProgress()
             if (allFiles[a].length) {
-
                 if (cfg.globalMode) {
                     if (!cfg.layerFilter || cfg.layerFilter == strSourceAllLayers.en || cfg.layerFilter == strSourceAllLayers.ru || cfg.layerFilter == layerTypesArray[a]) {
                         for (var i = 0; i < allFiles[a].length; i++) {
                             s.push(allFiles[a][i].name)
                         }
-
                     }
                 } else
                     if (!cfg.fileFilter || cfg.fileFilter == strSourceAllFiles.en || cfg.fileFilter == strSourceAllFiles.ru || cfg.fileFilter == a) {
                         for (var i = 0; i < allFiles[a].length; i++) {
                             s.push(allFiles[a][i].name)
                         }
-
                     }
             }
         }
@@ -471,7 +476,6 @@ function buildWindow() {
         if (!cfg.mode) progress.close();
         checkButtonsState()
     }
-
     dlFilter.onChange = function () {
         if (cfg.globalMode) {
             cfg.layerFilter = typesArray[this.selection.index]
@@ -530,7 +534,7 @@ function buildWindow() {
         ch5.value = cfg.filterComma == undefined ? 1 : cfg.filterComma
         ch6.value = cfg.filterColon == undefined ? 1 : cfg.filterColon
         ch7.value = cfg.filterBracket == undefined ? 1 : cfg.filterBracket
-        ch8.value = cfg.filterOther == undefined ? 1 : cfg.filterOther
+        ch8.value = cfg.filterRegexp == undefined ? 1 : cfg.filterRegexp
         textList.onClick()
         renew = true
     }
@@ -951,6 +955,41 @@ function insertInterval() {
         w.close()
     }
     cancel.onClick = function () { w.close(); result = "" }
+    w.show();
+    return result
+}
+function regExpFilter() {
+    var result = false
+    var w = new Window("dialog{text: '" + strFilterRegExp + "', orientation: 'column', alignChildren: ['fill', 'top'], spacing: 10,margins: 16 }"),
+        g1 = w.add("group{orientation: 'column', alignChildren: ['right', 'center'], spacing: 10, margins: 0}"),
+        g2 = g1.add("group{orientation: 'row', alignChildren: ['left', 'center'], spacing: 10, margins: 0}"),
+        st = g2.add("statictext{text:'" + strFilterRegExpSearch + "'}"),
+        etSearch = g2.add('edittext{preferredSize: [150, -1]}'),
+        g3 = g1.add("group{orientation: 'row', alignChildren: ['left', 'center'], spacing: 10, margins: 0}"),
+        st = g3.add("statictext{text:'" + strFilterRegExpReplace + "'}"),
+        etReplace = g3.add('edittext{preferredSize: [150, -1]}'),
+        ch1 = w.add('checkbox{text:"' + strFilterRegExpG + '"}'),
+        ch2 = w.add('checkbox{text:"' + strFilterRegExpI + '"}'),
+        g = w.add("group{orientation: 'row', alignChildren: ['center', 'center'], spacing: 10, margins: 0}"),
+        ok = g.add("button", undefined, strBnOk, { name: "ok" }),
+        cancel = g.add("button", undefined, strBnCancel, { name: "cancel" })
+    etSearch.onChanging = function () {
+        ok.enabled = !(this.text == '')
+    }
+    etSearch.text = cfg.filterRegexpSearch
+    etReplace.text = cfg.filterRegexpReplace;
+    ch1.value = cfg.filterRegexpG
+    ch2.value = cfg.filterRegexpI
+    etSearch.onChanging();
+    ok.onClick = function () {
+        cfg.filterRegexpSearch = etSearch.text;
+        cfg.filterRegexpReplace = etReplace.text
+        cfg.filterRegexpG = ch1.value
+        cfg.filterRegexpI = ch2.value
+        result = true;
+        w.close()
+    }
+    cancel.onClick = function () { w.close() }
     w.show();
     return result
 }
@@ -1472,14 +1511,18 @@ function Config() {
     this.metadata = true
     this.listMode = 0
     this.divider = 0
-    this.filterCyrillic = true
-    this.filterLatin = true
-    this.filterDigits = true
-    this.filterDot = true
-    this.filterComma = true
-    this.filterColon = true
-    this.filterBracket = true
-    this.filterOther = true
+    this.filterCyrillic = false
+    this.filterLatin = false
+    this.filterDigits = false
+    this.filterDot = false
+    this.filterComma = false
+    this.filterColon = false
+    this.filterBracket = false
+    this.filterRegexp = false
+    this.filterRegexpSearch = ''
+    this.filterRegexpReplace = ''
+    this.filterRegexpI = true
+    this.filterRegexpG = true
     this.duplicates = true
     this.getScriptSettings = function (settingsObj) {
         var f = new File(app.preferencesFolder + "/" + strMessage + ".desc"),
@@ -1610,15 +1653,18 @@ function joinCSV(strData, strDelimiter) {
     return strData.join(strDelimiter)
 }
 function formatLine(s) {
-    if (!cfg.filterCyrillic) s = s.replace(/[а-яё]/ig, " ")
-    if (!cfg.filterLatin) s = s.replace(/[a-z]/ig, " ")
-    if (!cfg.filterDigits) s = s.replace(/[\d]/g, " ")
-    if (!cfg.filterDot) s = s.replace(/[.]/g, " ")
-    if (!cfg.filterComma) s = s.replace(/[,]/g, " ")
-    if (!cfg.filterColon) s = s.replace(/[-]/g, " ")
-    if (!cfg.filterBracket) s = s.replace(/[()]/g, " ")
-    if (!cfg.filterOther) s = s.replace(/[^)(,.\-a-zа-яё\d ]/ig, " ")
-    if (!cfg.filterOther) s = s.replace(/[:\/*\?\<\>\|\#\[\]\\]/g, " ")
+    if (cfg.filterCyrillic) s = s.replace(/[а-яё]/ig, " ")
+    if (cfg.filterLatin) s = s.replace(/[a-z]/ig, " ")
+    if (cfg.filterDigits) s = s.replace(/[\d]/g, " ")
+    if (cfg.filterDot) s = s.replace(/[.]/g, " ")
+    if (cfg.filterComma) s = s.replace(/[,]/g, " ")
+    if (cfg.filterColon) s = s.replace(/[-]/g, " ")
+    if (cfg.filterBracket) s = s.replace(/[()]/g, " ")
+    if (cfg.filterRegexp) {
+        var options = (cfg.filterRegexpG ? 'g' : '') + (cfg.filterRegexpI ? 'i' : ''),
+            expression = new RegExp(cfg.filterRegexpSearch, options);
+        s = s.replace(expression, cfg.filterRegexpReplace)
+    }
     s = s.replace(/ +/g, " ")
     s = s.replace(/ +$/, "")
     s = s.replace(/^ +/, "")
