@@ -17,7 +17,7 @@ $.localize = true
 //$.locale = "ru"
 {
     var strMessage = "File collector",
-        rev = "0.85",
+        rev = "0.851",
         GUID = "808f4b96-50f3-4ff3-b00f-bc4189e89c5c",
         strBnBrowse = { ru: "Обзор...", en: "Browse..." },
         strBnCancel = { ru: "Отмена", en: "Cancel" },
@@ -1181,8 +1181,8 @@ function searchWindow(s, h) {
         }
         return uniqueFileName
         function pathExists(fld, fle, cur) {
+            if (File(cur).exists) return true
             for (var i = 0; i < fld.length; i++) {
-                if (File(cur).exists) return true
                 if (fld[i] != fle && fld[i].target == cur) return true
             }
             return false
