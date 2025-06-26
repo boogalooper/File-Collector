@@ -16,14 +16,14 @@ if (BridgeTalk.appName == "bridge") {
     fileCollectorToolMenu = new MenuElement("command", "File collector", "at the end of Tools", "fileCollectorToolMenu")
     fileCollectorThumbnailMenu = new MenuElement("command", "File collector", "at the end of Thumbnail", "fileCollectorThumbnailMenu")
     fileCollectorToolMenu.onSelect = function () { fileCollectorThumbnailMenu.onSelect() }
-fileCollectorThumbnailMenu.onSelect = function () { main() }
+    fileCollectorThumbnailMenu.onSelect = function () { main() }
 } else { main() }
 function main() {
     $.localize = true
     //$.locale = "ru"
     {
         var strMessage = "File collector",
-            rev = "0.9",
+            rev = "0.92",
             GUID = "808f4b96-50f3-4ff3-b00f-bc4189e89c5c",
             strBnBrowse = { ru: "Обзор...", en: "Browse..." },
             strBnCancel = { ru: "Отмена", en: "Cancel" },
@@ -255,7 +255,7 @@ function main() {
             }
             bnSaveAs.onClick = function () {
                 var cur = cfg.options
-                nm = prompt(strPresetPromt, dlPreset.selection.text + strPresetCopy, strPresetNew);
+                nm = inputBox(strPresetPromt, dlPreset.selection.text + strPresetCopy, strPresetNew);
                 if (nm != null && nm != "") {
                     if (cfg.getPreset(nm) == "" && nm != strPresetDefailt) {
                         cfg.putPreset(nm, cur, "add")
@@ -265,7 +265,7 @@ function main() {
                         renew = true;
                     } else {
                         if (nm != strPresetDefailt) {
-                            if (confirm(localize(strErrPreset, nm), false, strPresetNew)) {
+                            if (confirmBox(localize(strErrPreset, nm), false, strPresetNew)) {
                                 cfg.putPreset(nm, cur, "save")
                                 renew = false;
                                 dlPreset.selection = dlPreset.find(nm)
@@ -806,7 +806,7 @@ function main() {
             for (var i = 0; i < fileList.length; i++) { if (fileList[i].targetName) f.push(fileList[i]) }
             var len = f.length
             for (var i = 0; i < len; i++) {
-                if (progress)  progress.updateProgress();
+                if (progress) progress.updateProgress();
                 if (BridgeTalk.appName == "photoshop") {
                     app.updateProgress(i + 1, len * 2)
                     app.changeProgressText(f[i].targetName)
@@ -864,7 +864,7 @@ function main() {
                     if (!f[i].XMPErr && f[i].doXMP) f[i].sourceXMP.remove()
                 }
             }
-            if (progress)  progress.close()
+            if (progress) progress.close()
             function hasSameSourceFile(p, f) {
                 var len = p.length
                 for (var i = 0; i < len; i++) {
@@ -1573,6 +1573,41 @@ function main() {
         }
         return w;
     }
+    function inputBox(text, def, title) {
+        var result = "",
+            w = new Window("dialog{text: '" + title + "', orientation: 'column', alignChildren: ['fill', 'center'], spacing: 10,margins: 16 }"),
+            g = w.add("group{orientation: 'row', alignChildren: ['left', 'center'], spacing: 10, margins: 0}"),
+            st = g.add("statictext", undefined, undefined, { multiline: true }),
+            gBn = g.add("group{orientation: 'column', alignChildren: ['fill', 'top'], spacing: 10, margins: 0}"),
+            ok = gBn.add("button", undefined, strBnOk, { name: "ok" }),
+            cancel = gBn.add("button", undefined, strBnCancel, { name: "cancel" }),
+            et = w.add('edittext');
+        st.text = text
+        et.text = def
+        et.active = true
+        ok.onClick = function () {
+            result = et.text
+            w.close()
+        }
+        cancel.onClick = function () { w.close(); result = null }
+        w.show();
+        return result
+    }
+    function confirmBox(text, def, title) {
+        var result = "",
+            w = new Window("dialog{text: '" + title + "', orientation: 'column', alignChildren: ['center', 'center'], spacing: 10,margins: 16 }"),
+            st = w.add("statictext", undefined, undefined, { multiline: true }),
+            g = w.add("group{orientation: 'row', alignChildren: ['left', 'center'], spacing: 10, margins: 0}"),
+            ok = g.add("button", undefined, strBnOk, { name: "ok" }),
+            cancel = g.add("button", undefined, strBnCancel, { name: "cancel" });
+        st.text = text
+        app.beep()
+        if (def) cancel.active = true else ok.active = true
+        ok.onClick = function () { w.close(); return true }
+        cancel.onClick = function () { w.close(); return false; }
+        w.show();
+        return false
+    }
     function Config() {
         this.globalMode = false
         this.sourcePath = ""
@@ -1851,7 +1886,7 @@ function main() {
         }
     }
     function migrateToXML(f, f1) {
-        if (!f1.exists && confirm(strMigrateToXML + f1.fsName, 0, strMessage)) {
+        if (!f1.exists && confirmBox(strMigrateToXML + f1.fsName, 0, strMessage)) {
             d = new ActionDescriptor();
             try {
                 f.open('r')
