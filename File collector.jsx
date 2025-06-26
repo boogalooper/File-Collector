@@ -204,7 +204,7 @@ function main() {
                 dlPreset = grPreset.add("dropdownlist{selection:0, preferredSize: [200, -1]}"),
                 grPresetButtons = grPreset.add("group{orientation: 'row', alignChildren: ['left', 'center'], spacing: 0, margins: 0}"),
                 bnRefresh = grPresetButtons.add("button{text:'" + "↻" + "', helpTip:'" + strPresetRefresh + "',preferredSize: [30, -1]}"),
-                bnSave = grPresetButtons.add("button{text:'" + "✔" + "', helpTip:'" + strPresetSave + "',preferredSize: [30, -1]}"),
+                bnSave = grPresetButtons.add("button{text:'" + (BridgeTalk.appName == "bridge" ? "S":"✓") + "', helpTip:'" + strPresetSave + "',preferredSize: [30, -1]}"),
                 bnSaveAs = grPresetButtons.add("button{text:'" + "+" + "', helpTip:'" + strPresetAdd + "',preferredSize: [30, -1]}"),
                 bnDel = grPresetButtons.add("button{text:'" + "×" + "', helpTip:'" + strPresetDelete + "',preferredSize: [30, -1]}"),
                 pnDiv = pnOptions.add("panel{alignment:'fill'}"),
